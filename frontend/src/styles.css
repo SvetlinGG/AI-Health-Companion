@@ -1,1 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+* { box-sizing: border-box; }
+html, body { margin:0; font-family: Inter, system-ui, Arial, sans-serif; color:#111827; background:#fff; }
+h1,h2,h3 { margin: 0 0 12px; }
+a { color:#0ea5e9; }
+button { cursor: pointer; }
+
