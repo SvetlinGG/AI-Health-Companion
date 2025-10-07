@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root'})
 export class ApiService {
@@ -15,10 +16,23 @@ export class ApiService {
 
     try {
       const res = await this.http.post<{answer:string, sources?:{title:String, url:String}[] }>(
-        `${}`
-      )
-    } catch (error) {
-      
+        `${environment.apiBase}/ask`,
+        { question }
+      ).toPromise();
+      this.messages.update(m => [...m, { role: 'assistant', text: res?.answer ?? "", sources: res?.sources}]);
+    } catch (e) {
+      this.messages.update(m => [...m, {role: 'assistant', text: '⚠️ Error contacting server.'}]);
+    }finally{
+      this.loading.set(false);
     }
   }
+
+  // search API ( Elastic passthrough)
+  search(query: string){
+    return this.http.get<{title: String, snippet: String, url: string}[]>(
+      `${environment.apiBase}/search`, {params: { q: query}}
+    );
+  }
+
+  
 }
