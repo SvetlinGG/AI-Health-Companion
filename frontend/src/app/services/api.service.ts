@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root'})
 export class ApiService {
+  // signals for chat state
+  messages = signal<{ role: 'user' | 'assistant', text: string, sources?: {title:string, url:string}[] }[]>([]);
+  loading = signal(false);
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 }
