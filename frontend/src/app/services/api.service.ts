@@ -8,4 +8,17 @@ export class ApiService {
   loading = signal(false);
 
   constructor(private http: HttpClient) { }
+
+  async ask(question: string){
+    this.loading.set(true);
+    this.messages.update(m => [...m, {role: 'user', text: question}]);
+
+    try {
+      const res = await this.http.post<{answer:string, sources?:{title:String, url:String}[] }>(
+        `${}`
+      )
+    } catch (error) {
+      
+    }
+  }
 }
