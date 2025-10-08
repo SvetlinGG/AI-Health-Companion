@@ -1,0 +1,37 @@
+
+<svg
+  [attr.viewBox]="'0 0 ' + width + ' ' + height"
+  style="width:100%; max-height:220px; border:1px solid #e5e7eb; border-radius:8px;"
+>
+  @for (d of normalized(); track d; let i = $index) {
+    <g>
+      <rect
+        [attr.x]="i * (barWidth + gap)"
+        [attr.y]="height - d.h"
+        [attr.width]="barWidth"
+        [attr.height]="d.h"
+        rx="4" ry="4"
+      ></rect>
+
+      <text
+        [attr.x]="i * (barWidth + gap) + barWidth/2"
+        [attr.y]="height - d.h - 6"
+        text-anchor="middle"
+        style="font-size:10px;"
+      >
+        {{ d.value }}
+      </text>
+
+      <text
+        [attr.x]="i * (barWidth + gap) + barWidth/2"
+        [attr.y]="height - 4"
+        text-anchor="middle"
+        style="font-size:10px; fill:#6b7280"
+      >
+        {{ d.label }}
+      </text>
+    </g>
+  }
+</svg>
+
+<!-- <p>data-viz works!</p> -->
