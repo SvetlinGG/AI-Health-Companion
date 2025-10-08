@@ -2,11 +2,11 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { NavbarComponent } from './app/navbar.component';
 import { provideRouter } from '@angular/router';
-import { appRoutes} from './app/app.routes'
+import { routes} from './app/app.routes'
 
 bootstrapApplication(NavbarComponent, {
   providers: [
-    provideRouter(appRoutes),
+    provideRouter(routes),
     ...appConfig.providers
   ]
 })
