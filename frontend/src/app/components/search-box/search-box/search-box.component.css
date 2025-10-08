@@ -1,0 +1,16 @@
+
+.search { display: flex; 
+    gap:8px; 
+}
+input { flex: 1; 
+    padding: 8px 10px; 
+    border: 1px solid #d1d5db; 
+    border-radius: 8px; 
+}
+button { 
+    padding: 8px 12px; 
+    border-radius: 8px; 
+    border:1px solid #111827; 
+    background:#111827; 
+    color:white; 
+}
