@@ -34,5 +34,10 @@ export class ApiService {
     );
   }
 
-  
+  // Example analytics endpoint for dashboard widgets
+  analyticsSnapshot(){
+    return this.http.get<{ label: String, value: number}[]>(
+      `${environment.apiBase}/analytics/snapshot`
+    );
+  }
 }
