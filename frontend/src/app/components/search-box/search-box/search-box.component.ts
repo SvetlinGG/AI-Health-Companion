@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule} from '@angular/forms';
 
 @Component({
@@ -10,5 +10,11 @@ import { FormsModule} from '@angular/forms';
   styleUrl: './search-box.component.css'
 })
 export class SearchBoxComponent {
+  q = '';
+  @Output() search = new EventEmitter<string>();
+
+  onSubmit(){
+    this.search.emit(this.q.trim());
+  }
 
 }

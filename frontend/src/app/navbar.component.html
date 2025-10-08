@@ -1,11 +1,26 @@
 <header class="nav">
     <div class="brand" (click)="go('/dashboard')">AI Health Companion</div>
     <nav>
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/chat" routerLinkActive="active">Chat</a>
-      <a routerLink="/login" *ngIf="!auth()" routerLinkActive="active">Login</a>
-      <a routerLink="/register" *ngIf="!auth()" routerLinkActive="active">Register</a>
-      <button *ngIf="auth()" (click)="logout()">Logout</button>
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/chat" routerLinkActive="active">Chat</a>
+        
+        <a routerLink="/login"
+           routerLinkActive="active"
+           [hidden]="auth()">
+           Login
+        </a>
+        
+        <a routerLink="/register"
+           routerLinkActive="active"
+           [hidden]="auth()">
+           Register
+        </a>
+        
+        <button
+           (click)="logout()"
+           [hidden]="!auth()">
+           Logout
+        </button>
     </nav>
   </header>
   <main class="container">
