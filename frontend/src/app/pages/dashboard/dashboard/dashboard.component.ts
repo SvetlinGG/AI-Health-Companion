@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchBoxComponent } from '../../../components/search-box/search-box/search-box.component';
 import { DataVizComponent } from '../../../components/data-viz/data-viz/data-viz.component';
 import { ApiService } from '../../../services/api.service';
@@ -13,7 +14,8 @@ import { ApiService } from '../../../services/api.service';
 })
 export class DashboardComponent {
   private api = inject(ApiService);
-  results: {title: string, snippet: string, url: string}[] = [];
+  private destroyRef = inject(DestroyRef);
+  results: {title: String, snippet: String, url: string}[] = [];
   chartData = [
     {label: 'Q&A', value: 18},
     {label: 'Search', value: 12},
@@ -21,10 +23,12 @@ export class DashboardComponent {
     {label: 'Other', value: 4},
   ];
   onSearch(q: string){
-    this.api.search(q).subscribe({
-      next: (rows) => this.results = rows,
-      error: () => this.results = []
-    });
+    this.api.search(q)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (rows) => this.results = rows,
+        error: () => this.results = []
+      });
   }
 
 }
