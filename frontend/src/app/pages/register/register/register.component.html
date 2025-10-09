@@ -1,0 +1,10 @@
+<h2>Register</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="card">
+    <label>Email</label>
+    <input type="email" formControlName="email" />
+    <label>Password</label>
+    <input type="password" formControlName="password" />
+    <button [disabled]="form.invalid">Create account</button>
+  </form>
+  <p>Already have an account? <a routerLink="/login">Login</a></p>
+<!-- <p>register works!</p> -->
