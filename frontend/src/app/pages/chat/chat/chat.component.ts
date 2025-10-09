@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ApiService } from '../../../services/api.service';
 
 @Component({
   selector: 'app-chat',
@@ -10,5 +11,14 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './chat.component.css'
 })
 export class ChatComponent {
+  api = inject(ApiService);
+  q = '';
+
+  async send(){
+    const question = this.q.trim();
+    if (!question) return;
+    this.q = '';
+    await this.api.ask(question);
+  }
 
 }
