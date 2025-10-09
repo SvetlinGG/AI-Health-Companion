@@ -1,1 +1,36 @@
-<p>chat works!</p>
+<h2>Chatbot</h2>
+
+<div class="chat">
+  @for (m of api.messages(); track $index) {
+    <div [class.user]="m.role === 'user'"
+         [class.bot]="m.role === 'assistant'">
+      <div class="bubble">
+        <pre>{{ m.text }}</pre>
+
+        @if (m.sources?.length) {
+          <ul class="sources">
+            @for (s of m.sources; track $index) {
+              <li>
+                <a [href]="s.url" target="_blank" rel="noopener noreferrer">
+                  {{ s.title }}
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
+
+  @if (api.loading()) {
+    <div class="loading">Thinking…</div>
+  }
+</div>
+
+<form class="composer" (ngSubmit)="send()">
+  <input [(ngModel)]="q" name="q" placeholder="Ask a health question…" />
+  <button [disabled]="!q?.trim() || api.loading()">Send</button>
+</form>
+
+
+<!-- <p>chat works!</p> -->
