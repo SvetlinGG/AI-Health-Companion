@@ -1,0 +1,13 @@
+
+.panel { 
+    margin-bottom: 24px; 
+}
+.results { 
+    margin-top: 12px; 
+    display: grid; 
+    gap:8px; 
+}
+.snippet { 
+    color:#6b7280; 
+    font-size: 12px; 
+}

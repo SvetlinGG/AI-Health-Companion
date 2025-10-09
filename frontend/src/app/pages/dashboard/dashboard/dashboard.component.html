@@ -1,1 +1,28 @@
+<h2>Dashboard</h2>
+
+<section class="panel">
+  <h3>Quick Search</h3>
+
+  <search-box (search)="onSearch($event)"></search-box>
+
+  @if (results?.length) {
+    <ul class="results">
+      @for (r of results; track $index) {
+        <li>
+          <a [href]="r.url" target="_blank" rel="noopener noreferrer">
+            <strong>{{ r.title }}</strong>
+          </a>
+          <div class="snippet">{{ r.snippet }}</div>
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+<section class="panel">
+  <h3>Usage Snapshot</h3>
+  <data-viz [data]="chartData"></data-viz>
+</section>
+
+
 <p>dashboard works!</p>
