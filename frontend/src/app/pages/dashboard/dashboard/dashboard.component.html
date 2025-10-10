@@ -5,18 +5,14 @@
 
   <search-box (search)="onSearch($event)"></search-box>
 
-  @if (results?.length) {
-    <ul class="results">
-      @for (r of results; track $index) {
-        <li>
-          <a [href]="r.url" target="_blank" rel="noopener noreferrer">
-            <strong>{{ r.title.toString() }}</strong>
-          </a>
-          <div class="snippet">{{ r.snippet.toString() }}</div>
-        </li>
-      }
-    </ul>
-  }
+  <ul class="results" *ngIf="results?.length">
+    <li *ngFor="let r of results; trackBy: trackByIndex">
+      <a [href]="r.url" target="_blank" rel="noopener noreferrer">
+        <strong>{{ r.title.toString() }}</strong>
+      </a>
+      <div class="snippet">{{ r.snippet.toString() }}</div>
+    </li>
+  </ul>
 </section>
 
 <section class="panel">
