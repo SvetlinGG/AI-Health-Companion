@@ -3,7 +3,7 @@
 <section class="panel">
   <h3>Quick Search</h3>
 
-  <search-box (search)="onSearch($event)"></search-box>
+  <app-search-box (search)="onSearch($event)"></app-search-box>
 
   @if (results?.length) {
     <ul class="results">
@@ -21,7 +21,7 @@
 
 <section class="panel">
   <h3>Usage Snapshot</h3>
-  <data-viz [data]="chartData"></data-viz>
+  <app-data-viz [data]="chartData"></app-data-viz>
 </section>
 
 
