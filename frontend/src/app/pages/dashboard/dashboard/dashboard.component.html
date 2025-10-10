@@ -5,7 +5,7 @@
 
   <app-search-box (search)="onSearch($event)"></app-search-box>
 
-  @if (results?.length) {
+  @if (results.length) {
     <ul class="results">
       @for (r of results; track $index) {
         <li>

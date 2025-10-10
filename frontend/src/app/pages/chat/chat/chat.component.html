@@ -29,7 +29,7 @@
 
 <form class="composer" (ngSubmit)="send()">
   <input [(ngModel)]="q" name="q" placeholder="Ask a health question…" />
-  <button [disabled]="!q?.trim() || api.loading()">Send</button>
+  <button [disabled]="!q.trim() || api.loading()">Send</button>
 </form>
 
 
