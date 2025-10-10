@@ -15,7 +15,7 @@ import { ApiService } from '../../../services/api.service';
 export class DashboardComponent {
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
-  results: {title: String, snippet: String, url: string}[] = [];
+  results: {title: string, snippet: string, url: string}[] = [];
   chartData = [
     {label: 'Q&A', value: 18},
     {label: 'Search', value: 12},

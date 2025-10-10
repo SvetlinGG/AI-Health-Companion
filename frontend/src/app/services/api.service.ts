@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root'})
@@ -15,10 +16,10 @@ export class ApiService {
     this.messages.update(m => [...m, {role: 'user', text: question}]);
 
     try {
-      const res = await this.http.post<{answer:string, sources?:{title:String, url:String}[] }>(
+      const res = await firstValueFrom(this.http.post<{answer:string, sources?:{title:string, url:string}[] }>(
         `${environment.apiBase}/ask`,
         { question }
-      ).toPromise();
+      ));
       this.messages.update(m => [...m, { role: 'assistant', text: res?.answer ?? "", sources: res?.sources}]);
     } catch (e) {
       this.messages.update(m => [...m, {role: 'assistant', text: '⚠️ Error contacting server.'}]);
@@ -29,14 +30,14 @@ export class ApiService {
 
   // search API ( Elastic passthrough)
   search(query: string){
-    return this.http.get<{title: String, snippet: String, url: string}[]>(
+    return this.http.get<{title: string, snippet: string, url: string}[]>(
       `${environment.apiBase}/search`, {params: { q: query}}
     );
   }
 
   // Example analytics endpoint for dashboard widgets
   analyticsSnapshot(){
-    return this.http.get<{ label: String, value: number}[]>(
+    return this.http.get<{ label: string, value: number}[]>(
       `${environment.apiBase}/analytics/snapshot`
     );
   }

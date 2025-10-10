@@ -10,9 +10,9 @@
       @for (r of results; track $index) {
         <li>
           <a [href]="r.url" target="_blank" rel="noopener noreferrer">
-            <strong>{{ r.title.toString() }}</strong>
+            <strong>{{ r.title }}</strong>
           </a>
-          <div class="snippet">{{ r.snippet.toString() }}</div>
+          <div class="snippet">{{ r.snippet }}</div>
         </li>
       }
     </ul>
