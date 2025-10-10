@@ -31,8 +31,4 @@ export class DashboardComponent {
       });
   }
 
-  trackByIndex(index: number): number {
-    return index;
-  }
-
 }
