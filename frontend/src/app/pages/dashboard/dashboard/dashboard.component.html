@@ -6,7 +6,7 @@
   <search-box (search)="onSearch($event)"></search-box>
 
   <ul class="results" *ngIf="results?.length">
-    <li *ngFor="let r of results; trackBy: trackByIndex">
+    <li *ngFor="let r of results">
       <a [href]="r.url" target="_blank" rel="noopener noreferrer">
         <strong>{{ r.title.toString() }}</strong>
       </a>
