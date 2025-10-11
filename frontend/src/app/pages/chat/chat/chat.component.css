@@ -28,6 +28,7 @@ input {
     padding: 10px; 
     border-radius: 8px; 
     border: 1px solid #d1d5db; 
+    cursor: pointer;
 }
 button { 
     padding: 10px 14px; 
@@ -43,4 +44,7 @@ button {
 .loading { 
     opacity: 0.8; 
     font-style: italic; 
+}
+input::after{
+    border-color: blue;
 }
