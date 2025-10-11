@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { db } from '../data.js';
-import { requireEtlBearer } from '../lib/auth.js';
+import { requireBearer } from '../lib/auth.js';
 import { filterSince, parsePaging, page } from '../lib/paginate.js';
-import page from "page";
+
 
 export const etlRouter = Router();
 
 // Guard all /etl/* with bearer for Fivetran connector
-etlRouter.use(requireEtlBearer);
+etlRouter.use(requireBearer);
 
 // Get /api/etl/events?since=&page=&limit=
 
