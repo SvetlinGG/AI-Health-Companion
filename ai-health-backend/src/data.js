@@ -40,3 +40,45 @@ export const db = {
           }
     ]
 };
+// utility to append derived message/sources for the simple events
+
+export function seedDerived(){
+    if ( db.messages.length || db.sources.length ) return;
+    for ( const ev of db.events ){
+        db.messages.push({
+            message_id: uuid(),
+            event_id: ev.event_id,
+            role: 'user',
+            text: ev.question,
+            tokens: ev.question.length,
+            created_at: ev.created_at
+        });
+        db.messages.push({
+            message_id: uuid(),
+            event_id: ev.event_id,
+            role: 'assistant',
+            text: '(mocked) concise medical answer with citations',
+            tokens: 120,
+            created_at: now()
+          });
+          db.sources.push({
+            source_id: uuid(),
+            event_id: ev.event_id,
+            title: 'WHO – Diabetes Overview',
+            url: 'https://www.who.int/health-topics/diabetes',
+            domain: 'who.int',
+            rank: 1,
+            created_at: now()
+          });
+          db.sources.push({
+            source_id: uuid(),
+            event_id: ev.event_id,
+            title: 'NHS – Chest Pain',
+            url: 'https://www.nhs.uk/conditions/chest-pain/',
+            domain: 'nhs.uk',
+            rank: 1,
+            created_at: now()
+          });
+}
+}
+seedDerived()
