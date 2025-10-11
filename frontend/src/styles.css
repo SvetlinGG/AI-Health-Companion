@@ -5,7 +5,7 @@ html, body {
     margin:0; 
     font-family: Inter, system-ui, Arial, sans-serif; 
     color:#111827; 
-    background:#fff; 
+    background: lightgrey; 
 }
 h1,h2,h3 { 
     margin: 0 0 12px; 

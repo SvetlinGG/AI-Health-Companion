@@ -6,6 +6,7 @@
 }
 .brand { 
     font-weight: 700; 
+    color: red;
     cursor:pointer; 
 }
 nav a { 
