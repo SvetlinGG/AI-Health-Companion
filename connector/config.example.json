@@ -1,0 +1,8 @@
+{
+    "base_url": "http://localhost:3001/api/etl",
+    "api_key": "REPLACE_WITH_ETL_BEARER",
+    "page_size": 200,
+    "since": "2025-10-01T00:00:00Z",
+    "resources": ["events", "messages", "sources", "content"]
+  }
+  
