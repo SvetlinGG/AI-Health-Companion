@@ -1,7 +1,6 @@
 [build]
-  base = "frontend"
-  command = "npm install && npx ng build --configuration production"
-  publish = "dist/frontend"
+  command = "cd frontend && npm ci && npx ng build --configuration production"
+  publish = "frontend/dist/frontend/browser"
 
 [[redirects]]
   from = "/api/*"
