@@ -1,6 +1,8 @@
 
 export const environment = {
-    production: false,
+    production: true,
+
+    // Use Netlify proxy
     apiBase: '/api'
   };
   
