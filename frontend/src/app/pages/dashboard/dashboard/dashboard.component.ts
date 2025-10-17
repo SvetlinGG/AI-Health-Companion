@@ -36,28 +36,14 @@ export class DashboardComponent implements OnInit {
       });
   }
   
-ngOnInit() {
-  this.api.analyticsSnapshot()
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: (snap: AnalyticsSnapshot) => {
-        if (snap.dailyUsage) {
-          this.chartData = snap.dailyUsage.map((r) => ({
-            label: r.d || 'Unknown', 
-            value: Number(r.events || 0)
-          }));
-        }
-        if (snap.topDomains) {
-          this.results = snap.topDomains.map((r) => ({
-            title: r.domain || 'Unknown',
-            url: `https://${r.domain || 'example.com'}`,
-            snippet: `Count: ${r.c || 0}`
-          }));
-        }
-      },
-      error: (err) => console.error('Analytics error:', err)
-    });
-}
-
-
+  ngOnInit() {
+    this.api.analyticsSnapshot()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.chartData = data;
+        },
+        error: (err) => console.error('Analytics error:', err)
+      });
+  }
 }
