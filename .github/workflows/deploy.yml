@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  PROJECT_ID: ${{ vars.PROJECT_ID }}
   REGION: europe-west1
 
 jobs:
@@ -20,8 +20,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: ${{ secrets.GCP_WIP }}
-          service_account: 'ai-health-backend@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+          credentials_json: ${{ vars.SA_KEY }}
 
       - uses: 'google-github-actions/setup-gcloud@v2'
 
@@ -51,8 +50,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: ${{ secrets.GCP_WIP }}
-          service_account: 'ai-health-backend@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+          credentials_json: ${{ vars.SA_KEY }}
 
       - uses: 'google-github-actions/setup-gcloud@v2'
 
@@ -87,5 +85,5 @@ jobs:
           publish-dir: "frontend/dist/frontend/browser"
           production-deploy: "true"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
+          netlify-auth-token: ${{ vars.NETLIFY_TOKEN }}
+          netlify-site-id: ${{ vars.NETLIFY_ID }}
