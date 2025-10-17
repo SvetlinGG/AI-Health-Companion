@@ -27,7 +27,7 @@ jobs:
 
       - name: Build & Push (Backend)
         run: |
-          gcloud builds submit --tag gcr.io/${PROJECT_ID}/ai-health-backend ./backend
+          gcloud builds submit --tag gcr.io/${PROJECT_ID}/ai-health-backend ./ai-health-backend
 
       - name: Deploy (Backend)
         run: |
@@ -84,7 +84,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2
         with:
-          publish-dir: "frontend/dist/ai-health-frontend/browser"
+          publish-dir: "frontend/dist/frontend/browser"
           production-deploy: "true"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
