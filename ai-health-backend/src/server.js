@@ -15,8 +15,7 @@ const API_BASE = process.env.API_BASE || '/api';
 
 app.use(cors());
 app.use(express.json());
-app.use(`${API_BASE}/analytics`, analyticsRouter);
-app.use(`${API_BASE}/feedback`, feedbackRouter);
+
 
 // health 
 app.get('/', (_req, res) => res.json({ok: true, name: 'ai-health-backend'}));
@@ -24,6 +23,8 @@ app.get('/', (_req, res) => res.json({ok: true, name: 'ai-health-backend'}));
 // routes
 app.use(`${API_BASE}/ask`, askRouter);
 app.use(`${API_BASE}/etl`, etlRouter);
+app.use(`${API_BASE}/analytics`, analyticsRouter);
+app.use(`${API_BASE}/feedback`, feedbackRouter);
 
 // not found
 app.use((req, res) => res.status(404).json({error: 'Not found', path: req.path}));
