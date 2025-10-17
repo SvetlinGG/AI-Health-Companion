@@ -5,6 +5,7 @@ import {askRouter} from './routes/ask.js';
 import {etlRouter} from './routes/etl.js';
 import { analyticsRouter } from './routes/analytics.js';
 import { feedbackRouter } from './routes/feedback.js';
+import { ingestRouter } from './routes/ingest.js';
 
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(`${API_BASE}/ask`, askRouter);
 app.use(`${API_BASE}/etl`, etlRouter);
 app.use(`${API_BASE}/analytics`, analyticsRouter);
 app.use(`${API_BASE}/feedback`, feedbackRouter);
+app.use(`${API_BASE}/ingest`, ingestRouter)
 
 // not found
 app.use((req, res) => res.status(404).json({error: 'Not found', path: req.path}));
