@@ -1,0 +1,91 @@
+name: Deploy Full Stack
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: europe-west1
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIP }}
+          service_account: 'ai-health-backend@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+
+      - uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Build & Push (Backend)
+        run: |
+          gcloud builds submit --tag gcr.io/${PROJECT_ID}/ai-health-backend ./backend
+
+      - name: Deploy (Backend)
+        run: |
+          gcloud run deploy ai-health-backend \
+            --image gcr.io/${PROJECT_ID}/ai-health-backend \
+            --platform managed --region $REGION --allow-unauthenticated \
+            --service-account ai-health-backend@${PROJECT_ID}.iam.gserviceaccount.com \
+            --set-env-vars "API_BASE=/api,GCP_PROJECT_ID=${PROJECT_ID},BQ_DATASET=ai_health" \
+            --set-secrets "ETL_BEARER=ETL_BEARER:latest" \
+            --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest"
+
+  connector:
+    runs-on: ubuntu-latest
+    needs: backend
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIP }}
+          service_account: 'ai-health-backend@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+
+      - uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Build & Push (Connector)
+        run: |
+          gcloud builds submit --tag gcr.io/${PROJECT_ID}/ai-health-connector ./connector
+
+      - name: Deploy (Connector)
+        run: |
+          gcloud run deploy ai-health-connector \
+            --image gcr.io/${PROJECT_ID}/ai-health-connector \
+            --platform managed --region $REGION --allow-unauthenticated \
+            --set-env-vars "PORT=8080"
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: [backend, connector]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Build Angular
+        run: |
+          cd frontend
+          npm ci
+          npx ng build --configuration production
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2
+        with:
+          publish-dir: "frontend/dist/ai-health-frontend/browser"
+          production-deploy: "true"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
