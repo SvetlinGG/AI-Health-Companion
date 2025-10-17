@@ -1,6 +1,7 @@
 [build]
-  command = "ng build --configuration production"
-  publish = "dist/ai-health-frontend/browser"
+  base = "frontend"
+  command = "npm install && npx ng build --configuration production"
+  publish = "dist/frontend"
 
 [[redirects]]
   from = "/api/*"
