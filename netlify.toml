@@ -4,6 +4,6 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "http://localhost:3000/:splat"
+  to = "https://ai-health-backend-473242551252.europe-west1.run.app/api/:splat"
   status = 200
   force = true
