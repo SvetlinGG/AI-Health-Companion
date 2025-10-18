@@ -20,7 +20,7 @@ function generateHealthResponse(question) {
   if (symptoms.length > 0 || bodyParts.length > 0) {
     response = generateSymptomResponse(question, symptoms, bodyParts, urgencyLevel);
     sources = generateRelevantSources(symptoms, bodyParts);
-  } else if (q.includes('prevent') || q.includes('avoid')) {
+  } else if (q.includes('prevent') || q.includes('avoid') || q.includes('how can i') || q.includes('how to')) {
     response = generatePreventionAdvice(question);
     sources = [
       { title: "Prevention Guidelines", url: "#prevention" },
