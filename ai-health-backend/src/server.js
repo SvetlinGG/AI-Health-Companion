@@ -21,7 +21,7 @@ app.use(express.json());
 // health 
 app.get('/', (_req, res) => res.json({ok: true, name: 'ai-health-backend'}));
 
-// routes
+// routes - path
 app.use(`${API_BASE}/ask`, askRouter);
 app.use(`${API_BASE}/etl`, etlRouter);
 app.use(`${API_BASE}/analytics`, analyticsRouter);
