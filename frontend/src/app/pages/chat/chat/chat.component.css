@@ -10,7 +10,10 @@
     background:#f9fafb; 
     border: 1px solid #e5e7eb; 
     border-radius: 12px; 
-    padding: 8px 12px; 
+    padding: 8px 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 .user .bubble { 
     background:#ecfeff; 
@@ -39,12 +42,20 @@ button {
 }
 .sources { 
     margin: 6px 0 0; 
-    padding-left: 18px; 
+    padding-left: 18px;
+    word-wrap: break-word;
 }
 .loading { 
     opacity: 0.8; 
     font-style: italic; 
 }
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    font-family: inherit;
+}
+
 input::after{
     border-color: blue;
 }

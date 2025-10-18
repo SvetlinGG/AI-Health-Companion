@@ -15,28 +15,28 @@ askRouter.post('/', async (req, res) => {
     // Dynamic health-specific response
     const healthTopics = {
       diabetes: {
-        answer: "Diabetes is a chronic condition where your body cannot properly process blood sugar (glucose). There are two main types: Type 1 (autoimmune) and Type 2 (insulin resistance). Management includes diet, exercise, medication, and regular monitoring.",
+        answer: "Diabetes is a condition where your body can't process blood sugar properly. Type 1 is autoimmune, Type 2 involves insulin resistance. Managed with diet, exercise, and medication.",
         sources: [
           { title: "American Diabetes Association", url: "https://diabetes.org/about-diabetes" },
           { title: "CDC Diabetes Basics", url: "https://cdc.gov/diabetes/basics/diabetes.html" }
         ]
       },
       hypertension: {
-        answer: "High blood pressure (hypertension) occurs when blood pushes against artery walls with too much force. It's often called the 'silent killer' because it usually has no symptoms. Management includes lifestyle changes and medication.",
+        answer: "High blood pressure occurs when blood pushes against artery walls too forcefully. Often has no symptoms. Managed with lifestyle changes and medication.",
         sources: [
           { title: "American Heart Association", url: "https://heart.org/en/health-topics/high-blood-pressure" },
           { title: "Mayo Clinic - High Blood Pressure", url: "https://mayoclinic.org/diseases-conditions/high-blood-pressure" }
         ]
       },
       heart: {
-        answer: "Heart disease encompasses various conditions affecting the heart and blood vessels. Common types include coronary artery disease, heart failure, and arrhythmias. Prevention focuses on healthy lifestyle choices.",
+        answer: "Heart disease affects the heart and blood vessels. Includes coronary artery disease, heart failure, and arrhythmias. Prevention focuses on healthy lifestyle choices.",
         sources: [
           { title: "American Heart Association", url: "https://heart.org/en/health-topics/heart-disease" },
           { title: "NIH Heart Disease Information", url: "https://nhlbi.nih.gov/health/heart-disease" }
         ]
       },
       cancer: {
-        answer: "Cancer occurs when cells grow uncontrollably and spread to other parts of the body. There are many types, each requiring specific treatment approaches. Early detection and treatment improve outcomes significantly.",
+        answer: "Cancer occurs when cells grow uncontrollably and spread. Many types exist, each requiring specific treatments. Early detection improves outcomes significantly.",
         sources: [
           { title: "National Cancer Institute", url: "https://cancer.gov/about-cancer/understanding/what-is-cancer" },
           { title: "American Cancer Society", url: "https://cancer.org/cancer/cancer-basics/what-is-cancer.html" }
