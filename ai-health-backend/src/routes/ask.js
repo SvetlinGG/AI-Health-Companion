@@ -1,15 +1,8 @@
 import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import { db } from '../data.js';
-import { geminiAnswerWithCitations } from '../lib/gemini.js';
 
 export const askRouter = Router();
-
-// TODO: replace with real retrieval (Elastic) -> top-k passages
-async function retrieveContext(question) {
-  // Minimal placeholder: map your own content db/content index here
-  return db.content.slice(0, 3).map(c => ({ title: c.title, url: c.url, text: '...' }));
-}
 
 // POST /api/ask { question: string }
 askRouter.post('/', async (req, res) => {
@@ -19,11 +12,12 @@ askRouter.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Missing question' });
     }
 
-    const ctx = await retrieveContext(question);
-    const { text, citations } = await geminiAnswerWithCitations(question, ctx);
-
-    // Build sources list using our context order (fallback if Gemini didn’t return URIs)
-    const sources = ctx.map((c) => ({ title: c.title, url: c.url }));
+    // Mock response for testing
+    const text = `I understand you're asking about "${question}". This is a mock response while the AI system is being configured. Please consult with healthcare professionals for medical advice.`;
+    const sources = [
+      { title: "Health Information", url: "https://example.com/health" },
+      { title: "Medical Resources", url: "https://example.com/medical" }
+    ];
 
     // Telemetry
     const event_id = uuid();
@@ -32,21 +26,21 @@ askRouter.post('/', async (req, res) => {
 
     db.events.push({
       event_id, user_hash, question,
-      answer_len: text.length, latency_ms: 0, // fill in if you measure duration
+      answer_len: text.length, latency_ms: 0,
       sources_count: sources.length, thumbs_up: null, created_at
     });
 
-    db.messages.push({ message_id: uuid(), event_id, role: 'user',      text: question, tokens: question.length, created_at });
-    db.messages.push({ message_id: uuid(), event_id, role: 'assistant',  text,          tokens: Math.floor(text.length/4), created_at });
+    db.messages.push({ message_id: uuid(), event_id, role: 'user', text: question, tokens: question.length, created_at });
+    db.messages.push({ message_id: uuid(), event_id, role: 'assistant', text, tokens: Math.floor(text.length/4), created_at });
 
     sources.forEach((s, i) => db.sources.push({
       source_id: uuid(), event_id, title: s.title, url: s.url,
-      domain: new URL(s.url).hostname, rank: i+1, created_at
+      domain: 'example.com', rank: i+1, created_at
     }));
 
     res.json({ answer: text, sources });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Gemini request failed' });
+    res.status(500).json({ error: 'Server error' });
   }
 });
