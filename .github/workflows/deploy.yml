@@ -14,12 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v2
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          service_account_key: ${{ secrets.GCP_KEY }}
-          project_id: fir-1-84947
-          export_default_credentials: true
+          credentials_json: '${{ secrets.GCP_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Build & Push (Backend)
         run: |
@@ -41,12 +42,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v2
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          service_account_key: ${{ secrets.GCP_KEY }}
-          project_id: fir-1-84947
-          export_default_credentials: true
+          credentials_json: '${{ secrets.GCP_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Build & Push (Connector)
         run: |
