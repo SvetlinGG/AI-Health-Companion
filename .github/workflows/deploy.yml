@@ -1,8 +1,9 @@
 name: Deploy Full Stack
 
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
+  # push:
+  #   branches: [ main ]
 
 env:
   PROJECT_ID: fir-1-84947
