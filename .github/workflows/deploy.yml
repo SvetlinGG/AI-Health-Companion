@@ -20,7 +20,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ vars.SA_KEY }}
+          credentials_json: ${{ secrets.SA_KEY }}
 
       - uses: 'google-github-actions/setup-gcloud@v2'
 
@@ -50,7 +50,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ vars.SA_KEY }}
+          credentials_json: ${{ secrets.SA_KEY }}
 
       - uses: 'google-github-actions/setup-gcloud@v2'
 
