@@ -17,6 +17,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug secret
+        run: |
+          if [ -z "$SA_KEY" ]; then
+            echo "SA_KEY secret is empty or not set"
+            exit 1
+          else
+            echo "SA_KEY secret is set"
+          fi
+        env:
+          SA_KEY: ${{ secrets.SA_KEY }}
+
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
