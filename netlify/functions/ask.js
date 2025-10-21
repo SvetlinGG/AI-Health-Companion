@@ -16,18 +16,14 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Debug: Check if API key exists
-    console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
-    console.log('API Key length:', process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.length : 0);
-
     let response;
     
     if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 10) {
       try {
         console.log('Attempting to call Gemini API...');
         
-        // Use fetch to call Gemini API directly
-        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+        // Correct Gemini API endpoint
+        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -44,6 +40,8 @@ exports.handler = async (event, context) => {
         console.log('API Response status:', apiResponse.status);
         
         if (!apiResponse.ok) {
+          const errorText = await apiResponse.text();
+          console.error('API Error response:', errorText);
           throw new Error(`API responded with status: ${apiResponse.status}`);
         }
 
@@ -59,7 +57,7 @@ exports.handler = async (event, context) => {
       } catch (aiError) {
         console.error('AI Error:', aiError);
         response = {
-          answer: `I'm having trouble accessing the AI service right now. For the question "${question}", I recommend consulting with a healthcare professional for accurate medical advice. Error: ${aiError.message}`,
+          answer: `I'm having trouble accessing the AI service right now. For the question "${question}", I recommend consulting with a healthcare professional for accurate medical advice.`,
           sources: []
         };
       }
