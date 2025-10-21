@@ -6,6 +6,6 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://ai-health-backend-473242551252.europe-west1.run.app/api/:splat"
+  to = "https://YOUR-RENDER-APP-NAME.onrender.com/api/:splat"
   status = 200
   force = true
