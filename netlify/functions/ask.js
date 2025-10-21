@@ -1,5 +1,3 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
     return {
@@ -18,19 +16,27 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Use Gemini API if available, otherwise mock
     let response;
     
     if (process.env.GEMINI_API_KEY) {
       try {
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        
-        const prompt = `You are a helpful health assistant. Answer this health question: "${question}". 
-        Provide accurate, helpful information but always remind users to consult healthcare professionals for serious concerns.`;
-        
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+        // Use fetch to call Gemini API directly
+        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are a helpful health assistant. Answer this health question: "${question}". Provide accurate, helpful information but always remind users to consult healthcare professionals for serious concerns.`
+              }]
+            }]
+          })
+        });
+
+        const data = await apiResponse.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Unable to generate response';
         
         response = {
           answer: text,
@@ -38,14 +44,12 @@ exports.handler = async (event, context) => {
         };
       } catch (aiError) {
         console.error('AI Error:', aiError);
-        // Fallback to mock if AI fails
         response = {
           answer: `I'm having trouble accessing the AI service right now. For the question "${question}", I recommend consulting with a healthcare professional for accurate medical advice.`,
           sources: []
         };
       }
     } else {
-      // Mock response when no API key
       response = {
         answer: `Mock AI Response: Based on your question "${question}", here's a health-related answer. This is a demo response - in production, this would use Google's Gemini AI.`,
         sources: []

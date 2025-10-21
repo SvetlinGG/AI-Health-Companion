@@ -1,5 +1,8 @@
 
 
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
+
 [build]
   command = "cd frontend && npm ci && npx ng build --configuration production"
   publish = "frontend/dist/frontend/browser"
