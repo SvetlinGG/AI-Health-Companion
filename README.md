@@ -103,6 +103,28 @@ That inspired us to combine **Google Cloud’s Vertex AI (Gemini)** with **Fivet
 
 ## 🗺️ Architecture
 (Architecture diagram placeholder)
+Angular Frontend]
+│
+▼
+[Node.js Backend /api]
+├─► Vertex AI (Gemini) → health answers + citations
+├─► Logs telemetry → /api/etl/*
+├─► /analytics/snapshot → BigQuery views
+│
+▼
+[Fivetran Connector SDK (Python)]
+├─► Fetches /api/etl/*
+└─► Streams data to BigQuery (ai_health.*)
+│
+▼
+[BigQuery]
+├─ Tables: events, messages, sources, content
+└─ Views: daily_usage, top_domains
+│
+▼
+[Vertex AI + Scheduler]
+├─► Daily summarization & tagging
+└─► Feeds back insights to dashboard
 
 ## ⚙️ Installation & Setup
 See the main documentation for step-by-step local setup and Cloud Run deployment.
