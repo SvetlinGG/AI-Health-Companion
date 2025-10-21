@@ -5,7 +5,7 @@
   publish = "frontend/dist/frontend/browser"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/api/ask"
+  to = "/.netlify/functions/ask"
   status = 200
   force = true
