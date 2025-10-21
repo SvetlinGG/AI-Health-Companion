@@ -41,21 +41,86 @@ button {
     color:#fff; 
 }
 .sources { 
-    margin: 6px 0 0; 
+    margin: 0;
     padding-left: 18px;
     word-wrap: break-word;
+}
+
+.sources li {
+    margin-bottom: 4px;
+}
+
+.sources a {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.sources a:hover {
+    text-decoration: underline;
 }
 .loading { 
     opacity: 0.8; 
     font-style: italic; 
 }
-pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin: 0;
-    font-family: inherit;
+.medical-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-input::after{
-    border-color: blue;
+.doctor-icon {
+    font-size: 20px;
+}
+
+.title {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.message-content {
+    line-height: 1.6;
+    color: #374151;
+}
+
+.message-content p {
+    margin: 0 0 12px 0;
+}
+
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.sources-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.sources-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.disclaimer {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.4;
+}
+
+.bot .bubble {
+    background: #ffffff;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }

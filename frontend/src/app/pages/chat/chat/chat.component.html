@@ -5,18 +5,34 @@
     <div [class.user]="m.role === 'user'"
          [class.bot]="m.role === 'assistant'">
       <div class="bubble">
-        <pre>{{ m.text }}</pre>
+        @if (m.role === 'assistant') {
+          <div class="medical-header">
+            <span class="doctor-icon">🩺</span>
+            <span class="title">Medical Assistant</span>
+          </div>
+        }
+        
+        <div class="message-content" [innerHTML]="formatMessage(m.text)"></div>
 
         @if (m.sources?.length) {
-          <ul class="sources">
-            @for (s of m.sources; track $index) {
-              <li>
-                <a [href]="s.url" target="_blank" rel="noopener noreferrer">
-                  {{ s.title }}
-                </a>
-              </li>
-            }
-          </ul>
+          <div class="sources-section">
+            <h4>📚 Medical References:</h4>
+            <ul class="sources">
+              @for (s of m.sources; track $index) {
+                <li>
+                  <a [href]="s.url" target="_blank" rel="noopener noreferrer">
+                    {{ s.title }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        
+        @if (m.role === 'assistant') {
+          <div class="disclaimer">
+            ⚠️ This information is for educational purposes only. Always consult with a healthcare professional for medical advice.
+          </div>
         }
       </div>
     </div>

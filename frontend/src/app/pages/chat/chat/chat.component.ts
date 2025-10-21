@@ -21,4 +21,14 @@ export class ChatComponent {
     await this.api.ask(question);
   }
 
+  formatMessage(text: string): string {
+    return text
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^/, '<p>')
+      .replace(/$/, '</p>');
+  }
+
 }
