@@ -1,6 +1,12 @@
-<h2>Emergency Chatbot</h2>
-
-<div class="chat">
+<div class="chat-container">
+  @if (api.messages().length === 0) {
+    <div class="welcome-message">
+      <h2>🏥 AI Health Companion</h2>
+      <p>Ask me any health-related questions in English or Bulgarian. I'm here to provide medical guidance and information.</p>
+    </div>
+  }
+  
+  <div class="chat">
   @for (m of api.messages(); track $index) {
     <div [class.user]="m.role === 'user'"
          [class.bot]="m.role === 'assistant'">
@@ -47,6 +53,4 @@
   <input [(ngModel)]="q" name="q" placeholder="Ask a health question…" />
   <button [disabled]="!q.trim() || api.loading()">Send</button>
 </form>
-
-
-<!-- <p>chat works!</p> -->
+</div>
