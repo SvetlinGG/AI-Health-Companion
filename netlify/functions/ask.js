@@ -16,59 +16,39 @@ exports.handler = async (event, context) => {
       };
     }
 
-    let response;
+    // Simple health knowledge base
+    const healthResponses = {
+      'cancer': 'Cancer is a group of diseases involving abnormal cell growth with the potential to invade or spread to other parts of the body. Common types include breast, lung, prostate, and colorectal cancer. Early detection through regular screenings is crucial. Please consult with an oncologist for proper diagnosis and treatment.',
+      
+      'diabetes': 'Diabetes is a group of metabolic disorders characterized by high blood sugar levels. Type 1 diabetes is usually diagnosed in childhood, while Type 2 diabetes typically develops in adults. Management includes proper diet, exercise, medication, and regular blood sugar monitoring. Consult with an endocrinologist for personalized treatment.',
+      
+      'heart disease': 'Heart disease refers to several types of heart conditions, including coronary artery disease, heart attacks, and heart failure. Risk factors include high blood pressure, high cholesterol, smoking, and diabetes. Prevention involves a healthy diet, regular exercise, and avoiding smoking. See a cardiologist for heart health concerns.',
+      
+      'hypertension': 'Hypertension (high blood pressure) is when blood pressure readings are consistently above 140/90 mmHg. It often has no symptoms but increases risk of heart disease and stroke. Management includes lifestyle changes like reducing salt intake, exercising, and medication if needed. Regular monitoring is important.',
+      
+      'depression': 'Depression is a mental health disorder characterized by persistent sadness, loss of interest, and other symptoms that interfere with daily life. Treatment may include therapy, medication, or both. If you\'re experiencing symptoms of depression, please reach out to a mental health professional or your primary care doctor.',
+      
+      'anxiety': 'Anxiety disorders involve excessive worry, fear, or nervousness that interferes with daily activities. Common types include generalized anxiety disorder, panic disorder, and social anxiety. Treatment options include therapy, medication, and stress management techniques. Consult with a mental health professional for proper evaluation.'
+    };
+
+    // Find relevant response
+    const lowerQuestion = question.toLowerCase();
+    let response = '';
     
-    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 10) {
-      try {
-        console.log('Attempting to call Gemini API...');
-        
-        // Correct Gemini API endpoint format
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
-        
-        const apiResponse = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `You are a helpful health assistant. Answer this health question: "${question}". Provide accurate, helpful information but always remind users to consult healthcare professionals for serious concerns.`
-              }]
-            }]
-          })
-        });
-
-        console.log('API Response status:', apiResponse.status);
-        
-        if (!apiResponse.ok) {
-          const errorText = await apiResponse.text();
-          console.error('API Error response:', errorText);
-          throw new Error(`API responded with status: ${apiResponse.status} - ${errorText}`);
-        }
-
-        const data = await apiResponse.json();
-        console.log('API Response received successfully');
-        
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Unable to generate response';
-        
-        response = {
-          answer: text,
-          sources: []
-        };
-      } catch (aiError) {
-        console.error('AI Error:', aiError);
-        response = {
-          answer: `I'm having trouble accessing the AI service right now. For the question "${question}", I recommend consulting with a healthcare professional for accurate medical advice.`,
-          sources: []
-        };
+    for (const [condition, info] of Object.entries(healthResponses)) {
+      if (lowerQuestion.includes(condition)) {
+        response = info;
+        break;
       }
-    } else {
-      response = {
-        answer: `Mock AI Response: Based on your question "${question}", here's a health-related answer. This is a demo response - in production, this would use Google's Gemini AI.`,
-        sources: []
-      };
     }
+    
+    // Default response if no match found
+    if (!response) {
+      response = `Thank you for your health question about "${question}". While I can provide general health information, I recommend consulting with a healthcare professional for personalized medical advice. They can properly evaluate your specific situation and provide appropriate guidance.`;
+    }
+    
+    // Add disclaimer
+    response += '\n\n⚠️ Important: This information is for educational purposes only and should not replace professional medical advice. Always consult with qualified healthcare providers for medical concerns.';
 
     return {
       statusCode: 200,
@@ -78,7 +58,10 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
-      body: JSON.stringify(response)
+      body: JSON.stringify({
+        answer: response,
+        sources: []
+      })
     };
   } catch (error) {
     console.error('Function error:', error);
