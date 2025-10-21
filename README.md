@@ -3,4 +3,91 @@ AI-Accelerate-Hackathon
 
 link: https://ai-health-companion.netlify.app/
 
+# 🧠 AI Health Companion
+
+> **An AI-powered health assistant** that combines Google Cloud Vertex AI (Gemini) with Fivetran and BigQuery to deliver intelligent, cited health insights and data-driven analytics.
+
+## 📖 Table of Contents
+- [🌟 Inspiration](#-inspiration)
+- [💡 What it does](#-what-it-does)
+- [🏗️ How we built it](#️-how-we-built-it)
+- [⚙️ Challenges we ran into](#️-challenges-we-ran-into)
+- [🏆 Accomplishments](#-accomplishments)
+- [📚 What we learned](#-what-we-learned)
+- [🚀 What's next](#-whats-next)
+- [🧰 Built With](#-built-with)
+- [🗺️ Architecture](#️-architecture)
+- [⚙️ Installation & Setup](#️-installation--setup)
+- [☁️ Deployment](#️-deployment)
+- [🧪 Usage](#-usage)
+- [📊 Analytics & ETL](#-analytics--etl)
+- [👥 Team & Credits](#-team--credits)
+- [📜 License](#-license)
+
+## 🌟 Inspiration
+Our team wanted to build something truly helpful in everyday life — a **trusted AI companion for health-related questions**, powered by **real data**, not just language models.  
+We noticed that people often turn to the internet for health advice but rarely get answers backed by reliable information.  
+That inspired us to combine **Google Cloud’s Vertex AI (Gemini)** with **Fivetran’s automated data pipelines** and **BigQuery analytics**, to deliver not only answers, but also insights.
+
+## 💡 What it does
+**AI Health Companion** is a conversational assistant that:
+
+- Lets users ask **health or lifestyle questions** in natural language.  
+- Generates **accurate, cited answers** using Gemini on Vertex AI.  
+- Stores **anonymized interaction data** in BigQuery via a custom Fivetran Connector.  
+- Visualizes **daily usage and top health topics** in an Angular dashboard.  
+- Continuously ingests **new verified health content daily** through an agentic workflow using Vertex AI summarization.
+
+## 🏗️ How we built it
+
+### Tech Stack
+- **Frontend:** Angular 18 (standalone components, Signals, Data Viz) → deployed on Netlify.  
+- **Backend:** Node.js/Express on Cloud Run → handles `/api/ask`, `/etl`, `/analytics/snapshot`.  
+- **Connector:** Custom Python service (FastAPI) built with Fivetran Connector SDK, deployed to Cloud Run.  
+- **Data Layer:** Fivetran → BigQuery dataset (`ai_health`) → views for analytics.  
+- **AI Layer:** Vertex AI (Gemini 1.5 Flash) for real-time Q&A, summarization, and auto-tagging of new content.  
+- **Automation:** Cloud Scheduler triggers a daily ingest job → Gemini annotates articles → Fivetran syncs data into BigQuery.  
+- **CI/CD:** GitHub Actions deploys backend & connector to Cloud Run, and frontend to Netlify.
+
+## ⚙️ Challenges we ran into
+- Setting up the **Fivetran custom connector** with correct pagination and schema discovery logic.  
+- Handling **Vertex AI authentication** on Cloud Run without exposing keys (service accounts).  
+- Ensuring **CORS and proxy rules** worked seamlessly between Netlify and Cloud Run.  
+- Managing **schema consistency in BigQuery** when syncing incremental data.  
+- Designing a **lightweight yet meaningful analytics dashboard**.
+
+## 🏆 Accomplishments
+- Built a fully working **end-to-end AI data pipeline** in under two weeks.  
+- Integrated **Fivetran → BigQuery → Vertex AI** smoothly for continuous data enrichment.  
+- Created a clean **Angular UI** with real-time insights (usage trends, feedback, sources).  
+- Deployed everything **serverlessly** using **Cloud Run** and **Netlify**.  
+- Implemented an **agentic ingestion flow** for daily health article annotation using Gemini.
+
+## 📚 What we learned
+- How to design **LLM-driven apps** that combine conversational AI with structured analytics.  
+- The power of **Fivetran SDK** for building custom data connectors.  
+- Best practices for **secure AI deployments** using Secret Manager & IAM roles.  
+- Efficient **CI/CD automation** with GitHub Actions → Cloud Run → Netlify.  
+- Collaboration and iteration in a multi-service cloud environment.
+
+## 🚀 What's next
+- Expand the **knowledge base** with verified medical sources.  
+- Implement **personalized dashboards** and recommendation insights.  
+- Add **multi-language support** (EN/BG/DE).  
+- Integrate **Elastic hybrid search** for context-grounded answers.  
+- Build a **mobile app** for offline Q&A and notifications.
+
+## 🧰 Built With
+**Languages:** TypeScript • JavaScript • Python  
+**Frameworks:** Angular • Express.js • FastAPI  
+**Cloud Services:** Google Cloud Run • Vertex AI • BigQuery • Secret Manager • Cloud Scheduler  
+**ETL:** Fivetran Connector SDK • Fivetran API  
+**DevOps:** Docker • GitHub Actions • Netlify  
+
+## 🗺️ Architecture
+(Architecture diagram placeholder)
+
+## ⚙️ Installation & Setup
+See the main documentation for step-by-step local setup and Cloud Run deployment.
+
 
