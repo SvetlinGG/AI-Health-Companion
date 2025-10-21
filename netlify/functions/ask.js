@@ -22,8 +22,10 @@ exports.handler = async (event, context) => {
       try {
         console.log('Attempting to call Gemini API...');
         
-        // Correct Gemini API endpoint
-        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+        // Correct Gemini API endpoint format
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        
+        const apiResponse = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -42,11 +44,11 @@ exports.handler = async (event, context) => {
         if (!apiResponse.ok) {
           const errorText = await apiResponse.text();
           console.error('API Error response:', errorText);
-          throw new Error(`API responded with status: ${apiResponse.status}`);
+          throw new Error(`API responded with status: ${apiResponse.status} - ${errorText}`);
         }
 
         const data = await apiResponse.json();
-        console.log('API Response received');
+        console.log('API Response received successfully');
         
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Unable to generate response';
         
@@ -62,7 +64,6 @@ exports.handler = async (event, context) => {
         };
       }
     } else {
-      console.log('No valid API key found, using mock response');
       response = {
         answer: `Mock AI Response: Based on your question "${question}", here's a health-related answer. This is a demo response - in production, this would use Google's Gemini AI.`,
         sources: []
