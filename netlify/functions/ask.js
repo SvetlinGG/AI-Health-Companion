@@ -47,7 +47,7 @@ Explain in detail:
 
 Speak like a real doctor - warmly, professionally, and with specific advice. Each answer should be unique to this question.`;
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`;
         
         const apiResponse = await fetch(apiUrl, {
           method: 'POST',
