@@ -19,98 +19,109 @@ exports.handler = async (event, context) => {
     let response;
     let isBulgarian = /[а-я]/.test(question);
     
-    // Always try to use Gemini AI first
+    // Try multiple Gemini model endpoints
+    const models = [
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-flash',
+      'gemini-pro',
+      'gemini-1.0-pro'
+    ];
+    
+    let geminiWorked = false;
+    
     if (process.env.GEMINI_API_KEY) {
-      try {
-        console.log('Attempting Gemini AI call...');
-        console.log('API Key length:', process.env.GEMINI_API_KEY.length);
-        
-        // Create specific, detailed health prompt for Gemini
-        const healthPrompt = isBulgarian ? 
-          `Ти си професионален лекар. Пациент те пита: "${question}"
-
-Обясни подробно:
-1. Какво представлява това състояние
-2. Възможните причини
-3. Как може да се лекува или облекчи
-4. Кога да се търси медицинска помощ
-
-Говори като истински лекар - топло, професионално и с конкретни съвети. Всеки отговор трябва да е уникален за този въпрос.` :
+      for (const model of models) {
+        try {
+          console.log(`Trying Gemini model: ${model}`);
           
-          `You are a professional doctor. A patient asks you: "${question}"
+          const healthPrompt = isBulgarian ? 
+            `Ти си професионален лекар. Пациент те пита: "${question}". Обясни подробно какво представлява това състояние, възможните причини, как може да се лекува и кога да се търси медицинска помощ. Говори топло и професионално като истински лекар.` :
+            `You are a professional doctor. A patient asks: "${question}". Explain in detail what this condition is, possible causes, how it can be treated, and when to seek medical help. Speak warmly and professionally like a real doctor.`;
 
-Explain in detail:
-1. What this condition is
-2. Possible causes
-3. How it can be treated or relieved
-4. When to seek medical help
+          const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: healthPrompt
+                }]
+              }],
+              generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 800
+              }
+            })
+          });
 
-Speak like a real doctor - warmly, professionally, and with specific advice. Each answer should be unique to this question.`;
-
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`;
-        
-        const apiResponse = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: healthPrompt
-              }]
-            }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 1000
+          if (apiResponse.ok) {
+            const data = await apiResponse.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+            if (text && text.length > 50) {
+              console.log(`Success with model: ${model}`);
+              response = {
+                answer: text,
+                sources: []
+              };
+              geminiWorked = true;
+              break;
             }
-          })
-        });
-
-        console.log('Gemini API Response status:', apiResponse.status);
-        
-        if (apiResponse.ok) {
-          const data = await apiResponse.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (text && text.length > 50) {
-            console.log('Gemini response received successfully');
-            response = {
-              answer: text,
-              sources: []
-            };
           } else {
-            throw new Error('Empty or invalid Gemini response');
+            console.log(`Model ${model} failed with status:`, apiResponse.status);
           }
-        } else {
-          const errorText = await apiResponse.text();
-          console.error('Gemini API Error:', apiResponse.status, errorText);
-          throw new Error(`Gemini API error: ${apiResponse.status}`);
+        } catch (error) {
+          console.log(`Model ${model} error:`, error.message);
+          continue;
         }
-      } catch (aiError) {
-        console.error('Gemini AI Error:', aiError.message);
-        
-        // Create a more specific fallback based on the question
-        const specificResponse = isBulgarian ? 
-          `Разбирам, че се интересувате от "${question}". Това е важен здравен въпрос, който изисква внимание. Препоръчвам ви да се консултирате с медицински специалист, който може да ви даде подробна информация и персонализиран съвет за вашата конкретна ситуация. Всеки случай е уникален и заслужава професионална оценка.` :
-          `I understand you're asking about "${question}". This is an important health topic that deserves attention. I recommend consulting with a medical professional who can provide you with detailed information and personalized advice for your specific situation. Every case is unique and deserves professional evaluation.`;
-        
-        response = {
-          answer: specificResponse,
-          sources: []
-        };
       }
-    } else {
-      console.log('No Gemini API key found, using fallback response');
+    }
+    
+    // If Gemini didn't work, provide a detailed manual response
+    if (!geminiWorked) {
+      console.log('All Gemini models failed, using manual response');
+      
+      // Create specific responses for common questions
+      const manualResponses = {
+        'acne': isBulgarian ? 
+          'Акнето е кожно заболяване, при което се появяват пъпки, черни точки и възпаления по лицето, гърба и гърдите. Причинява се от запушени пори, бактерии и хормонални промени. Може да се лекува с правилна грижа за кожата, специални продукти и при нужда - медикаменти. При тежки случаи се препоръчва консултация с дерматолог.' :
+          'Acne is a skin condition where pimples, blackheads, and inflamed bumps appear on the face, back, and chest. It\'s caused by clogged pores, bacteria, and hormonal changes. It can be treated with proper skincare, special products, and when needed - medications. For severe cases, consultation with a dermatologist is recommended.',
+        
+        'headache': isBulgarian ?
+          'Главоболието е болка в главата, която може да бъде причинена от стрес, дехидратация, недостиг на сън, напрежение в мускулите или мигрена. За облекчение помагат почивка, вода, студен или топъл компрес и болкоуспокояващи. При чести или силни главоболия се препоръчва лекарска консултация.' :
+          'A headache is pain in the head that can be caused by stress, dehydration, lack of sleep, muscle tension, or migraine. Relief can come from rest, water, cold or warm compress, and pain relievers. For frequent or severe headaches, medical consultation is recommended.',
+        
+        'back pain': isBulgarian ?
+          'Болката в гърба може да се дължи на мускулно напрежение, лоша стойка, повдигане на тежести или проблеми с прешлените. Помагат почивка, топли компреси, леки упражнения и правилна стойка. При силна или продължителна болка е необходима лекарска консултация.' :
+          'Back pain can be due to muscle tension, poor posture, lifting heavy objects, or spinal problems. Rest, warm compresses, light exercises, and proper posture help. For severe or persistent pain, medical consultation is necessary.'
+      };
+      
+      // Find matching response
+      const lowerQuestion = question.toLowerCase();
+      let matchedResponse = '';
+      
+      for (const [key, value] of Object.entries(manualResponses)) {
+        if (lowerQuestion.includes(key)) {
+          matchedResponse = value;
+          break;
+        }
+      }
+      
+      if (!matchedResponse) {
+        matchedResponse = isBulgarian ?
+          `Относно въпроса ви за "${question}" - това е важна здравна тема. Всяко здравословно състояние има свои специфики и изисква индивидуален подход. Препоръчвам ви да се консултирате с медицински специалист, който може да ви даде точна информация и персонализиран съвет за вашата конкретна ситуация.` :
+          `Regarding your question about "${question}" - this is an important health topic. Every health condition has its specifics and requires an individual approach. I recommend consulting with a medical professional who can give you accurate information and personalized advice for your specific situation.`;
+      }
+      
       response = {
-        answer: isBulgarian ? 
-          `За въпроса "${question}" препоръчвам да се консултирате с медицински специалист за точна диагноза и лечение.` :
-          `For your question about "${question}", I recommend consulting with a medical professional for accurate diagnosis and treatment.`,
+        answer: matchedResponse,
         sources: []
       };
     }
     
-    // Add professional disclaimer
+    // Add disclaimer
     if (isBulgarian) {
       response.answer += '\n\n⚠️ Медицинска бележка: Тази информация е предоставена с образователна цел и не заменя професионалната медицинска консултация, диагноза или лечение. Винаги се консултирайте с вашия лекар или друг квалифициран здравен специалист при медицински въпроси или притеснения.';
     } else {
