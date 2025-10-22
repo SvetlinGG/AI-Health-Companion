@@ -1,7 +1,8 @@
 /* Mountain sunset background */
 :host {
   display: block;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   width: 100%;
   background: linear-gradient(135deg, 
     rgba(255, 94, 77, 0.8) 0%,
@@ -259,23 +260,29 @@ button:disabled {
 @media (max-width: 428px) {
   :host {
     padding: 0;
-    min-height: -webkit-fill-available;
+    height: 100vh;
+    height: 100dvh;
+    height: -webkit-fill-available;
   }
   
   .chat-container {
     padding: 20px 15px 100px 15px;
-    padding-bottom: 10px;
     border-radius: 0;
     margin: 0;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
+    height: -webkit-fill-available;
     background: transparent;
     box-shadow: none;
     border: none;
+    display: flex;
+    flex-direction: column;
   }
   
   .chat {
-    max-height: calc(100vh - 200px);
+    flex: 1;
     overflow-y: auto;
+    margin-bottom: 0;
   }
   
   .bubble {
