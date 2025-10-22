@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
   try {
     const path = event.path || '';
     
-    if (path.includes('/analytics/snapshot')) {
+    if (path.includes('analytics') || event.queryStringParameters?.endpoint === 'snapshot') {
       // Mock analytics data - in real app this would come from database
       const analyticsData = [
         { label: 'Health Questions', value: 45 },
