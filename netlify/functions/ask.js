@@ -76,9 +76,30 @@ Speak like a real doctor - professionally but with warmth and understanding.`;
           
           if (text && text.length > 30) {
             console.log('Gemini AI response successful');
+            const getRelevantSources = (question) => {
+              const lowerQ = question.toLowerCase();
+              
+              if (lowerQ.includes('cancer') || lowerQ.includes('tumor') || lowerQ.includes('oncology')) {
+                return ['https://www.cancer.org/', 'https://www.cancer.gov/'];
+              }
+              if (lowerQ.includes('heart') || lowerQ.includes('cardiac') || lowerQ.includes('cardiovascular')) {
+                return ['https://www.heart.org/', 'https://www.nhlbi.nih.gov/'];
+              }
+              if (lowerQ.includes('diabetes') || lowerQ.includes('blood sugar')) {
+                return ['https://www.diabetes.org/', 'https://www.cdc.gov/diabetes/'];
+              }
+              if (lowerQ.includes('mental') || lowerQ.includes('anxiety') || lowerQ.includes('depression')) {
+                return ['https://www.nimh.nih.gov/', 'https://www.mentalhealth.gov/'];
+              }
+              if (lowerQ.includes('skin') || lowerQ.includes('dermatology') || lowerQ.includes('acne')) {
+                return ['https://www.aad.org/', 'https://www.niams.nih.gov/'];
+              }
+              return ['https://www.mayoclinic.org/', 'https://medlineplus.gov/', 'https://www.webmd.com/'];
+            };
+            
             response = {
               answer: text.trim(),
-              sources: []
+              sources: getRelevantSources(question)
             };
             geminiWorked = true;
           }
@@ -170,13 +191,41 @@ Speak like a real doctor - professionally but with warmth and understanding.`;
           `Regarding "${question}" - this is a health topic that can have various causes and manifestations. I recommend consultation with an appropriate medical specialist for professional evaluation and personalized advice for your specific situation.`;
       };
       
+      const getRelevantSources = (question) => {
+        const lowerQ = question.toLowerCase();
+        
+        if (lowerQ.includes('cancer') || lowerQ.includes('tumor') || lowerQ.includes('oncology')) {
+          return ['https://www.cancer.org/', 'https://www.cancer.gov/'];
+        }
+        if (lowerQ.includes('heart') || lowerQ.includes('cardiac') || lowerQ.includes('cardiovascular')) {
+          return ['https://www.heart.org/', 'https://www.nhlbi.nih.gov/'];
+        }
+        if (lowerQ.includes('diabetes') || lowerQ.includes('blood sugar')) {
+          return ['https://www.diabetes.org/', 'https://www.cdc.gov/diabetes/'];
+        }
+        if (lowerQ.includes('mental') || lowerQ.includes('anxiety') || lowerQ.includes('depression')) {
+          return ['https://www.nimh.nih.gov/', 'https://www.mentalhealth.gov/'];
+        }
+        if (lowerQ.includes('skin') || lowerQ.includes('dermatology') || lowerQ.includes('acne')) {
+          return ['https://www.aad.org/', 'https://www.niams.nih.gov/'];
+        }
+        return ['https://www.mayoclinic.org/', 'https://medlineplus.gov/', 'https://www.webmd.com/'];
+      };
+      
       response = {
         answer: generateHealthResponse(question),
-        sources: []
+        sources: getRelevantSources(question)
       };
     }
     
-    // Add disclaimer
+    // Add references and disclaimer
+    if (response.sources && response.sources.length > 0) {
+      const referencesText = isBulgarian ? 
+        '\n\n📚 За най-актуална информация посетете:' :
+        '\n\n📚 For the most up-to-date information, visit:';
+      response.answer += referencesText + '\n' + response.sources.map(source => `• ${source}`).join('\n');
+    }
+    
     if (isBulgarian) {
       response.answer += '\n\n⚠️ Медицинска бележка: Тази информация е предоставена с образователна цел и не заменя професионалната медицинска консултация, диагноза или лечение. Винаги се консултирайте с вашия лекар или друг квалифициран здравен специалист при медицински въпроси или притеснения.';
     } else {
