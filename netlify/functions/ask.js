@@ -23,31 +23,19 @@ exports.handler = async (event, context) => {
       try {
         console.log('Using Gemini AI for health question...');
         
-        // Create health-focused prompt for Gemini
+        // Create natural, conversational health prompt for Gemini
         const healthPrompt = isBulgarian ? 
-          `Ти си професионален лекар и здравен консултант. Отговори на този здравен въпрос на български език: "${question}"
+          `Ти си опитен лекар, който разговаря с пациент. Пациентът те пита: "${question}"
 
-Моля, структурирай отговора си така:
-- Използвай прости думи, които всеки може да разбере
-- Организирай информацията с точки и секции
-- Включи възможни причини
-- Дай практични съвети за облекчение
-- Посочи кога да се търси медицинска помощ
-- Винаги напомни, че това е обща информация и не заменя консултация с лекар
+Отговори естествено и лично, като че ли седиш срещу пациента в кабинета си. Използвай прости думи и обясни нещата така, както би обяснил на приятел или член от семейството. Бъди топъл, разбиращ и практичен в съветите си.
 
-Отговори професионално, но достъпно за обикновените хора.` :
+Не използвай шаблони или списъци с точки - просто говори естествено като лекар, който се грижи за пациента си.` :
           
-          `You are a professional doctor and health consultant. Answer this health question: "${question}"
+          `You are an experienced doctor having a conversation with a patient. The patient asks you: "${question}"
 
-Please structure your response like this:
-- Use simple language that everyone can understand
-- Organize information with bullet points and sections
-- Include possible causes
-- Give practical relief advice
-- Mention when to seek medical help
-- Always remind that this is general information and doesn't replace doctor consultation
+Respond naturally and personally, as if you're sitting across from the patient in your office. Use simple words and explain things the way you would to a friend or family member. Be warm, understanding, and practical in your advice.
 
-Respond professionally but accessible to regular people.`;
+Don't use templates or bullet point lists - just speak naturally as a caring doctor would to their patient.`;
 
         const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
           method: 'POST',
