@@ -261,22 +261,26 @@ button:disabled {
   :host {
     padding: 0;
     height: 100vh;
-    height: 100dvh;
-    height: -webkit-fill-available;
+    height: 100svh;
+    max-height: 100vh;
+    max-height: 100svh;
+    overflow: hidden;
   }
   
   .chat-container {
-    padding: 20px 15px 100px 15px;
+    padding: 10px 15px 80px 15px;
     border-radius: 0;
     margin: 0;
     height: 100vh;
-    height: 100dvh;
-    height: -webkit-fill-available;
+    height: 100svh;
+    max-height: 100vh;
+    max-height: 100svh;
     background: transparent;
     box-shadow: none;
     border: none;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
   
   .chat {
