@@ -6,6 +6,7 @@ exports.handler = async (event, context) => {
     };
   }
 
+  
   try {
     const { question } = JSON.parse(event.body);
     
@@ -83,37 +84,72 @@ exports.handler = async (event, context) => {
     if (!geminiWorked) {
       console.log('All Gemini models failed, using manual response');
       
-      // Create specific responses for common questions
-      const manualResponses = {
-        'acne': isBulgarian ? 
-          'Акнето е кожно заболяване, при което се появяват пъпки, черни точки и възпаления по лицето, гърба и гърдите. Причинява се от запушени пори, бактерии и хормонални промени. Може да се лекува с правилна грижа за кожата, специални продукти и при нужда - медикаменти. При тежки случаи се препоръчва консултация с дерматолог.' :
-          'Acne is a skin condition where pimples, blackheads, and inflamed bumps appear on the face, back, and chest. It\'s caused by clogged pores, bacteria, and hormonal changes. It can be treated with proper skincare, special products, and when needed - medications. For severe cases, consultation with a dermatologist is recommended.',
+      // Generate dynamic responses based on specific questions
+      const generateResponse = (question) => {
+        const lowerQ = question.toLowerCase();
         
-        'headache': isBulgarian ?
-          'Главоболието е болка в главата, която може да бъде причинена от стрес, дехидратация, недостиг на сън, напрежение в мускулите или мигрена. За облекчение помагат почивка, вода, студен или топъл компрес и болкоуспокояващи. При чести или силни главоболия се препоръчва лекарска консултация.' :
-          'A headache is pain in the head that can be caused by stress, dehydration, lack of sleep, muscle tension, or migraine. Relief can come from rest, water, cold or warm compress, and pain relievers. For frequent or severe headaches, medical consultation is recommended.',
+        // Acne-related questions
+        if (lowerQ.includes('acne') || lowerQ.includes('pimple')) {
+          if (lowerQ.includes('cause') || lowerQ.includes('why')) {
+            return isBulgarian ? 
+              'Акнето се причинява от: запушени пори от излишно себум, бактерии (P. acnes), хормонални промени (пубертет, менструация), генетика, стрес, неподходящи козметични продукти, и диета богата на млечни продукти или захар.' :
+              'Acne is caused by: clogged pores from excess sebum, bacteria (P. acnes), hormonal changes (puberty, menstruation), genetics, stress, unsuitable cosmetic products, and diet high in dairy or sugar.';
+          }
+          if (lowerQ.includes('treat') || lowerQ.includes('cure') || lowerQ.includes('get rid')) {
+            return isBulgarian ?
+              'Лечение на акне: ежедневно почистване с нежен продукт, салицилова киселина или бензоил пероксид, ретиноиди, при тежки случаи - антибиотици или изотретиноин. Избягвайте пипане на лицето.' :
+              'Acne treatment: daily cleansing with gentle products, salicylic acid or benzoyl peroxide, retinoids, for severe cases - antibiotics or isotretinoin. Avoid touching your face.';
+          }
+          return isBulgarian ?
+            'Акнето е възпалително кожно заболяване с пъпки и черни точки. Основни причини: хормони, бактерии, запушени пори, генетика. Засяга 85% от тийнейджърите и може да продължи в зряла възраст.' :
+            'Acne is an inflammatory skin condition with pimples and blackheads. Main causes: hormones, bacteria, clogged pores, genetics. Affects 85% of teenagers and can continue into adulthood.';
+        }
         
-        'back pain': isBulgarian ?
-          'Болката в гърба може да се дължи на мускулно напрежение, лоша стойка, повдигане на тежести или проблеми с прешлените. Помагат почивка, топли компреси, леки упражнения и правилна стойка. При силна или продължителна болка е необходима лекарска консултация.' :
-          'Back pain can be due to muscle tension, poor posture, lifting heavy objects, or spinal problems. Rest, warm compresses, light exercises, and proper posture help. For severe or persistent pain, medical consultation is necessary.'
+        // Headache questions
+        if (lowerQ.includes('headache') || lowerQ.includes('head pain')) {
+          if (lowerQ.includes('cause') || lowerQ.includes('why')) {
+            return isBulgarian ?
+              'Причини за главоболие: тензионно напрежение (най-честo), мигрена, дехидратация, недостиг на сън, стрес, кофеин, хормонални промени, синузит, проблеми със зрението, или сериозни състояния като хипертония.' :
+              'Headache causes: tension stress (most common), migraine, dehydration, sleep deprivation, stress, caffeine, hormonal changes, sinusitis, vision problems, or serious conditions like hypertension.';
+          }
+          if (lowerQ.includes('migraine')) {
+            return isBulgarian ?
+              'Мигрената е неврологично заболяване с пулсираща болка, често едностранна. Причини: генетика, хормони, стрес, определени храни (шоколад, сирене), светлина, звуци. Може да се придружава от гадене и светлочувствителност.' :
+              'Migraine is a neurological condition with throbbing pain, often one-sided. Causes: genetics, hormones, stress, certain foods (chocolate, cheese), light, sounds. May be accompanied by nausea and light sensitivity.';
+          }
+          return isBulgarian ?
+            'Главоболието може да бъде тензионно (най-често), мигрена, или вторично от други причини. Възможни фактори: стрес, умора, дехидратация, лоша стойка, хормони, или медицински състояния.' :
+            'Headaches can be tension-type (most common), migraine, or secondary to other causes. Possible factors: stress, fatigue, dehydration, poor posture, hormones, or medical conditions.';
+        }
+        
+        // Back pain questions
+        if (lowerQ.includes('back pain') || lowerQ.includes('back ache')) {
+          if (lowerQ.includes('lower') || lowerQ.includes('low')) {
+            return isBulgarian ?
+              'Болка в долната част на гърба: мускулно напрежение (80% от случаите), дискова херния, артрит, остеопороза, лоша стойка, седящ начин на живот, внезапни движения, или повдигане на тежести.' :
+              'Lower back pain: muscle strain (80% of cases), disc herniation, arthritis, osteoporosis, poor posture, sedentary lifestyle, sudden movements, or lifting heavy objects.';
+          }
+          if (lowerQ.includes('cause') || lowerQ.includes('why')) {
+            return isBulgarian ?
+              'Причини за болка в гърба: мускулно напрежение, лоша стойка, дегенеративни промени в прешлените, дискова херния, артрит, остеопороза, стрес, наднормено тегло, или недостатъчна физическа активност.' :
+              'Back pain causes: muscle strain, poor posture, degenerative spinal changes, disc herniation, arthritis, osteoporosis, stress, excess weight, or insufficient physical activity.';
+          }
+          return isBulgarian ?
+            'Болката в гърба засяга 80% от хората. Най-чести причини: мускулно напрежение, лоша стойка, дискови проблеми. Може да бъде остра (под 6 седмици) или хронична (над 3 месеца).' :
+            'Back pain affects 80% of people. Most common causes: muscle strain, poor posture, disc problems. Can be acute (under 6 weeks) or chronic (over 3 months).';
+        }
+        
+        // Default response for unmatched questions
+        return isBulgarian ?
+          `Относно "${question}" - това здравословно състояние може да има множество причини включително генетични фактори, начин на живот, стрес, хормонални промени, или основни медицински състояния. Препоръчвам консултация със специалист за точна диагноза.` :
+          `Regarding "${question}" - this health condition can have multiple causes including genetic factors, lifestyle, stress, hormonal changes, or underlying medical conditions. I recommend consulting a specialist for accurate diagnosis.`;
       };
       
       // Find matching response
       const lowerQuestion = question.toLowerCase();
       let matchedResponse = '';
       
-      // Check for acne-related keywords
-      if (lowerQuestion.includes('acne') || lowerQuestion.includes('pimple') || lowerQuestion.includes('акне')) {
-        matchedResponse = manualResponses['acne'];
-      }
-      // Check for headache-related keywords  
-      else if (lowerQuestion.includes('headache') || lowerQuestion.includes('head pain') || lowerQuestion.includes('главобол')) {
-        matchedResponse = manualResponses['headache'];
-      }
-      // Check for back pain keywords
-      else if (lowerQuestion.includes('back pain') || lowerQuestion.includes('back ache') || lowerQuestion.includes('болка в гърба')) {
-        matchedResponse = manualResponses['back pain'];
-      }
+      matchedResponse = generateResponse(question);
       
       if (!matchedResponse) {
         matchedResponse = isBulgarian ?
