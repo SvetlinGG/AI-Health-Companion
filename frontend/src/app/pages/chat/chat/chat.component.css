@@ -310,8 +310,8 @@ button:disabled {
     right: 0;
     gap: 10px;
     margin: 0;
-    /* padding: 15px; */
-    /* padding-bottom: env(safe-area-inset-bottom, 15px); */
+    padding: 15px;
+    padding-bottom: env(safe-area-inset-bottom, 15px);
     padding-bottom: 15px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(15px);
