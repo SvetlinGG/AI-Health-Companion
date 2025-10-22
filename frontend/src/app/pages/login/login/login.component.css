@@ -60,7 +60,10 @@
 }
 
 .form-group {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .form-group label {
@@ -107,7 +110,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 20px;
+  margin: 0;
+  align-self: stretch;
 }
 
 .login-button:hover {
@@ -125,6 +129,7 @@
 .login-footer {
   text-align: center;
   margin-top: 20px;
+  width: 100%;
 }
 
 .login-footer a {
@@ -231,9 +236,23 @@
 @media (max-width: 375px) {
   .login-container {
     padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
   }
   
   .login-header h2 {
     font-size: 22px;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 }
