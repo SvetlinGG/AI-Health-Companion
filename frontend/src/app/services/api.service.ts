@@ -38,7 +38,7 @@ export class ApiService {
   // Example analytics endpoint for dashboard widgets
   analyticsSnapshot(){
     return this.http.get<{ label: string, value: number}[]>(
-      `${environment.apiBase}/analytics/snapshot`
+      `${environment.apiBase}/analytics-snapshot`
     );
   }
 }
