@@ -6,7 +6,6 @@ exports.handler = async (event, context) => {
     };
   }
 
-  
   try {
     const { question } = JSON.parse(event.body);
     
@@ -20,145 +19,159 @@ exports.handler = async (event, context) => {
     let response;
     let isBulgarian = /[а-я]/.test(question);
     
-    // Try multiple Gemini model endpoints
-    const models = [
-      'gemini-1.5-flash-latest',
-      'gemini-1.5-flash',
-      'gemini-pro',
-      'gemini-1.0-pro'
-    ];
-    
+    // Try Gemini AI with better prompting
     let geminiWorked = false;
     
     if (process.env.GEMINI_API_KEY) {
-      for (const model of models) {
-        try {
-          console.log(`Trying Gemini model: ${model}`);
-          
-          const healthPrompt = isBulgarian ? 
-            `Ти си професионален лекар. Пациент те пита: "${question}". Обясни подробно какво представлява това състояние, възможните причини, как може да се лекува и кога да се търси медицинска помощ. Говори топло и професионално като истински лекар.` :
-            `You are a professional doctor. A patient asks: "${question}". Explain in detail what this condition is, possible causes, how it can be treated, and when to seek medical help. Speak warmly and professionally like a real doctor.`;
+      try {
+        const healthPrompt = isBulgarian ? 
+          `Ти си опитен лекар с дълги години практика. Пациент те пита: "${question}". 
 
-          const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+Дай професионален, но разбираем отговор който включва:
+- Какво представлява състоянието/симптомът
+- Възможни причини и рискови фактори  
+- Препоръки за справяне или лечение
+- Кога да се търси медицинска помощ
+
+Говори като истински лекар - професионално, но с топлота и разбиране.` :
+          `You are an experienced doctor with years of practice. A patient asks: "${question}"
+
+Provide a professional yet understandable response that includes:
+- What the condition/symptom represents
+- Possible causes and risk factors  
+- Recommendations for management or treatment
+- When to seek medical help
+
+Speak like a real doctor - professionally but with warmth and understanding.`;
+
+        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: healthPrompt
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 1000,
+              topP: 0.8,
+              topK: 40
             },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: healthPrompt
-                }]
-              }],
-              generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 800
+            safetySettings: [
+              {
+                category: 'HARM_CATEGORY_MEDICAL',
+                threshold: 'BLOCK_NONE'
               }
-            })
-          });
+            ]
+          })
+        });
 
-          if (apiResponse.ok) {
-            const data = await apiResponse.json();
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            
-            if (text && text.length > 50) {
-              console.log(`Success with model: ${model}`);
-              response = {
-                answer: text,
-                sources: []
-              };
-              geminiWorked = true;
-              break;
-            }
-          } else {
-            console.log(`Model ${model} failed with status:`, apiResponse.status);
+        if (apiResponse.ok) {
+          const data = await apiResponse.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          
+          if (text && text.length > 30) {
+            console.log('Gemini AI response successful');
+            response = {
+              answer: text.trim(),
+              sources: []
+            };
+            geminiWorked = true;
           }
-        } catch (error) {
-          console.log(`Model ${model} error:`, error.message);
-          continue;
+        } else {
+          const errorData = await apiResponse.text();
+          console.log('Gemini API error:', apiResponse.status, errorData);
         }
+      } catch (error) {
+        console.log('Gemini request error:', error.message);
       }
     }
     
-    // If Gemini didn't work, provide a detailed manual response
+    // If Gemini didn't work, provide intelligent fallback
     if (!geminiWorked) {
-      console.log('All Gemini models failed, using manual response');
+      console.log('Gemini AI unavailable, using intelligent fallback');
       
-      // Generate dynamic responses based on specific questions
-      const generateResponse = (question) => {
+      // Intelligent health response generator
+      const generateHealthResponse = (question) => {
         const lowerQ = question.toLowerCase();
         
-        // Acne-related questions
-        if (lowerQ.includes('acne') || lowerQ.includes('pimple')) {
-          if (lowerQ.includes('cause') || lowerQ.includes('why')) {
-            return isBulgarian ? 
-              'Акнето се причинява от: запушени пори от излишно себум, бактерии (P. acnes), хормонални промени (пубертет, менструация), генетика, стрес, неподходящи козметични продукти, и диета богата на млечни продукти или захар.' :
-              'Acne is caused by: clogged pores from excess sebum, bacteria (P. acnes), hormonal changes (puberty, menstruation), genetics, stress, unsuitable cosmetic products, and diet high in dairy or sugar.';
-          }
-          if (lowerQ.includes('treat') || lowerQ.includes('cure') || lowerQ.includes('get rid')) {
-            return isBulgarian ?
-              'Лечение на акне: ежедневно почистване с нежен продукт, салицилова киселина или бензоил пероксид, ретиноиди, при тежки случаи - антибиотици или изотретиноин. Избягвайте пипане на лицето.' :
-              'Acne treatment: daily cleansing with gentle products, salicylic acid or benzoyl peroxide, retinoids, for severe cases - antibiotics or isotretinoin. Avoid touching your face.';
-          }
-          return isBulgarian ?
+        // Common health topics with intelligent responses
+        const healthTopics = {
+          // Symptoms
+          'fever|temperature': isBulgarian ? 
+            'Треската е естествена защитна реакция на организма срещу инфекции. Причини: вирусни/бактериални инфекции, възпаление, стрес. При температура над 38.5°C или продължителна треска се препоръчва лекарска консултация.' :
+            'Fever is a natural protective response against infections. Causes: viral/bacterial infections, inflammation, stress. Medical consultation recommended for temperature above 38.5°C or persistent fever.',
+          
+          'cough|coughing': isBulgarian ?
+            'Кашлицата е защитен рефлекс за почистване на дихателните пътища. Причини: простуда, алергии, астма, ГЕРБ, инфекции. Хронична кашлица (над 8 седмици) изисква медицинска оценка.' :
+            'Cough is a protective reflex to clear airways. Causes: cold, allergies, asthma, GERD, infections. Chronic cough (over 8 weeks) requires medical evaluation.',
+          
+          'fatigue|tired|exhausted': isBulgarian ?
+            'Умората може да се дължи на недостиг на сън, стрес, анемия, хормонални нарушения, депресия, хронични заболявания. Важно е да се установи основната причина чрез медицинска консултация.' :
+            'Fatigue can be due to sleep deprivation, stress, anemia, hormonal disorders, depression, chronic diseases. Important to identify underlying cause through medical consultation.',
+          
+          // Body systems
+          'stomach|gastric|digestive': isBulgarian ?
+            'Стомашните проблеми могат да включват гастрит, язви, ГЕРБ, синдром на раздразненото черво. Причини: стрес, неправилно хранене, H. pylori, медикаменти. При постоянни симптоми се препоръчва гастроентеролог.' :
+            'Stomach problems can include gastritis, ulcers, GERD, irritable bowel syndrome. Causes: stress, poor diet, H. pylori, medications. Persistent symptoms warrant gastroenterologist consultation.',
+          
+          'skin|dermatology': isBulgarian ?
+            'Кожните проблеми могат да бъдат алергични, инфекциозни, автоимунни или генетични. Честите състояния включват екзема, псориазис, дерматит. Препоръчва се консултация с дерматолог за точна диагноза.' :
+            'Skin problems can be allergic, infectious, autoimmune or genetic. Common conditions include eczema, psoriasis, dermatitis. Dermatologist consultation recommended for accurate diagnosis.',
+          
+          'joint|arthritis|bone': isBulgarian ?
+            'Ставните болки могат да се дължат на артрит, артроза, травми, автоимунни заболявания. Рискови фактори: възраст, наднормено тегло, генетика, предишни травми. При постоянна болка се препоръчва ревматолог.' :
+            'Joint pain can be due to arthritis, osteoarthritis, injuries, autoimmune diseases. Risk factors: age, excess weight, genetics, previous injuries. Persistent pain warrants rheumatologist consultation.',
+
+          'cancer|tumor': isBulgarian ?
+            'Ракът е група заболявания при които клетките растат неконтролируемо. Основни причини: генетика, възраст, начин на живот, околна среда. Над 200 различни типа рак съществуват. Ранното откриване значително подобрява прогнозата.' :
+            'Cancer is a group of diseases where cells grow uncontrollably. Main causes: genetics, age, lifestyle, environment. Over 200 different types of cancer exist. Early detection significantly improves prognosis.',
+
+          'blood pressure|hypertension': isBulgarian ?
+            'Високото кръвно налягане (хипертония) е състояние при което кръвта упражнява прекомерна сила върху артериите. Засяга 1.3 милиарда души глобално. Основни рискови фактори: възраст, генетика, начин на живот.' :
+            'High blood pressure (hypertension) is a condition where blood exerts excessive force on arteries. Affects 1.3 billion people globally. Main risk factors: age, genetics, lifestyle.',
+
+          'diabetes|blood sugar': isBulgarian ?
+            'Диабетът е заболяване при което организмът не може да регулира кръвната захар. Тип 1 (5-10%) - автоимунен; Тип 2 (90-95%) - инсулинова резистентност. Засяга 537 милиона души глобално.' :
+            'Diabetes is a disease where the body cannot regulate blood sugar. Type 1 (5-10%) - autoimmune; Type 2 (90-95%) - insulin resistance. Affects 537 million people globally.',
+
+          'heart|cardiac': isBulgarian ?
+            'Сърдечните заболявания са водеща причина за смърт глобално. Включват коронарна болест, сърдечна недостатъчност, аритмии. Основни рискови фактори: възраст, пол, генетика, начин на живот.' :
+            'Heart disease is the leading cause of death globally. Includes coronary disease, heart failure, arrhythmias. Main risk factors: age, gender, genetics, lifestyle.',
+
+          'acne|pimple': isBulgarian ?
             'Акнето е възпалително кожно заболяване с пъпки и черни точки. Основни причини: хормони, бактерии, запушени пори, генетика. Засяга 85% от тийнейджърите и може да продължи в зряла възраст.' :
-            'Acne is an inflammatory skin condition with pimples and blackheads. Main causes: hormones, bacteria, clogged pores, genetics. Affects 85% of teenagers and can continue into adulthood.';
-        }
-        
-        // Headache questions
-        if (lowerQ.includes('headache') || lowerQ.includes('head pain')) {
-          if (lowerQ.includes('cause') || lowerQ.includes('why')) {
-            return isBulgarian ?
-              'Причини за главоболие: тензионно напрежение (най-честo), мигрена, дехидратация, недостиг на сън, стрес, кофеин, хормонални промени, синузит, проблеми със зрението, или сериозни състояния като хипертония.' :
-              'Headache causes: tension stress (most common), migraine, dehydration, sleep deprivation, stress, caffeine, hormonal changes, sinusitis, vision problems, or serious conditions like hypertension.';
-          }
-          if (lowerQ.includes('migraine')) {
-            return isBulgarian ?
-              'Мигрената е неврологично заболяване с пулсираща болка, често едностранна. Причини: генетика, хормони, стрес, определени храни (шоколад, сирене), светлина, звуци. Може да се придружава от гадене и светлочувствителност.' :
-              'Migraine is a neurological condition with throbbing pain, often one-sided. Causes: genetics, hormones, stress, certain foods (chocolate, cheese), light, sounds. May be accompanied by nausea and light sensitivity.';
-          }
-          return isBulgarian ?
+            'Acne is an inflammatory skin condition with pimples and blackheads. Main causes: hormones, bacteria, clogged pores, genetics. Affects 85% of teenagers and can continue into adulthood.',
+
+          'headache|migraine': isBulgarian ?
             'Главоболието може да бъде тензионно (най-често), мигрена, или вторично от други причини. Възможни фактори: стрес, умора, дехидратация, лоша стойка, хормони, или медицински състояния.' :
-            'Headaches can be tension-type (most common), migraine, or secondary to other causes. Possible factors: stress, fatigue, dehydration, poor posture, hormones, or medical conditions.';
-        }
-        
-        // Back pain questions
-        if (lowerQ.includes('back pain') || lowerQ.includes('back ache')) {
-          if (lowerQ.includes('lower') || lowerQ.includes('low')) {
-            return isBulgarian ?
-              'Болка в долната част на гърба: мускулно напрежение (80% от случаите), дискова херния, артрит, остеопороза, лоша стойка, седящ начин на живот, внезапни движения, или повдигане на тежести.' :
-              'Lower back pain: muscle strain (80% of cases), disc herniation, arthritis, osteoporosis, poor posture, sedentary lifestyle, sudden movements, or lifting heavy objects.';
-          }
-          if (lowerQ.includes('cause') || lowerQ.includes('why')) {
-            return isBulgarian ?
-              'Причини за болка в гърба: мускулно напрежение, лоша стойка, дегенеративни промени в прешлените, дискова херния, артрит, остеопороза, стрес, наднормено тегло, или недостатъчна физическа активност.' :
-              'Back pain causes: muscle strain, poor posture, degenerative spinal changes, disc herniation, arthritis, osteoporosis, stress, excess weight, or insufficient physical activity.';
-          }
-          return isBulgarian ?
+            'Headaches can be tension-type (most common), migraine, or secondary to other causes. Possible factors: stress, fatigue, dehydration, poor posture, hormones, or medical conditions.',
+
+          'back pain': isBulgarian ?
             'Болката в гърба засяга 80% от хората. Най-чести причини: мускулно напрежение, лоша стойка, дискови проблеми. Може да бъде остра (под 6 седмици) или хронична (над 3 месеца).' :
-            'Back pain affects 80% of people. Most common causes: muscle strain, poor posture, disc problems. Can be acute (under 6 weeks) or chronic (over 3 months).';
+            'Back pain affects 80% of people. Most common causes: muscle strain, poor posture, disc problems. Can be acute (under 6 weeks) or chronic (over 3 months).'
+        };
+        
+        // Find matching topic
+        for (const [keywords, response] of Object.entries(healthTopics)) {
+          const keywordList = keywords.split('|');
+          if (keywordList.some(keyword => lowerQ.includes(keyword))) {
+            return response;
+          }
         }
         
-        // Default response for unmatched questions
+        // General health response
         return isBulgarian ?
-          `Относно "${question}" - това здравословно състояние може да има множество причини включително генетични фактори, начин на живот, стрес, хормонални промени, или основни медицински състояния. Препоръчвам консултация със специалист за точна диагноза.` :
-          `Regarding "${question}" - this health condition can have multiple causes including genetic factors, lifestyle, stress, hormonal changes, or underlying medical conditions. I recommend consulting a specialist for accurate diagnosis.`;
+          `За въпроса "${question}" - това е здравна тема която може да има различни причини и проявления. Препоръчвам консултация с подходящ медицински специалист за професионална оценка и персонализиран съвет според вашата конкретна ситуация.` :
+          `Regarding "${question}" - this is a health topic that can have various causes and manifestations. I recommend consultation with an appropriate medical specialist for professional evaluation and personalized advice for your specific situation.`;
       };
       
-      // Find matching response
-      const lowerQuestion = question.toLowerCase();
-      let matchedResponse = '';
-      
-      matchedResponse = generateResponse(question);
-      
-      if (!matchedResponse) {
-        matchedResponse = isBulgarian ?
-          `Относно въпроса ви за "${question}" - това е важна здравна тема. Всяко здравословно състояние има свои специфики и изисква индивидуален подход. Препоръчвам ви да се консултирате с медицински специалист, който може да ви даде точна информация и персонализиран съвет за вашата конкретна ситуация.` :
-          `Regarding your question about "${question}" - this is an important health topic. Every health condition has its specifics and requires an individual approach. I recommend consulting with a medical professional who can give you accurate information and personalized advice for your specific situation.`;
-      }
-      
       response = {
-        answer: matchedResponse,
+        answer: generateHealthResponse(question),
         sources: []
       };
     }
