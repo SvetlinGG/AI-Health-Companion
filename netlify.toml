@@ -12,3 +12,15 @@
   to = "/.netlify/functions/ask"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/api/search"
+  to = "/.netlify/functions/search"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/analytics/snapshot"
+  to = "/.netlify/functions/analytics-snapshot"
+  status = 200
+  force = true
