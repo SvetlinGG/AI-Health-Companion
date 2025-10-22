@@ -25,21 +25,21 @@ Everything runs securely in the cloud — no personal health data is stored, onl
 > **An AI-powered health assistant** that combines Google Cloud Vertex AI (Gemini) with Fivetran and BigQuery to deliver intelligent, cited health insights and data-driven analytics.
 
 ## 📖 Table of Contents
-- [🌟 Inspiration](#-inspiration)
-- [💡 What it does](#-what-it-does)
-- [🏗️ How we built it](#️-how-we-built-it)
-- [⚙️ Challenges we ran into](#️-challenges-we-ran-into)
-- [🏆 Accomplishments](#-accomplishments)
-- [📚 What we learned](#-what-we-learned)
-- [🚀 What's next](#-whats-next)
-- [🧰 Built With](#-built-with)
-- [🗺️ Architecture](#️-architecture)
-- [⚙️ Installation & Setup](#️-installation--setup)
-- [☁️ Deployment](#️-deployment)
-- [🧪 Usage](#-usage)
-- [📊 Analytics & ETL](#-analytics--etl)
-- [👥 Team & Credits](#-team--credits)
-- [📜 License](#-license)
+- [ Inspiration](#-inspiration)
+- [ What it does](#-what-it-does)
+- [ How we built it](#️-how-we-built-it)
+- [ Challenges we ran into](#️-challenges-we-ran-into)
+- [ Accomplishments](#-accomplishments)
+- [ What we learned](#-what-we-learned)
+- [ What's next](#-whats-next)
+- [ Built With](#-built-with)
+- [ Architecture](#️-architecture)
+- [ Installation & Setup](#️-installation--setup)
+- [ Deployment](#️-deployment)
+- [ Usage](#-usage)
+- [ Analytics & ETL](#-analytics--etl)
+- [ Team & Credits](#-team--credits)
+- [ License](#-license)
 
 ## 🌟 Inspiration
 Our team wanted to build something truly helpful in everyday life — a **trusted AI companion for health-related questions**, powered by **real data**, not just language models.  
