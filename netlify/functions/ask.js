@@ -102,11 +102,17 @@ exports.handler = async (event, context) => {
       const lowerQuestion = question.toLowerCase();
       let matchedResponse = '';
       
-      for (const [key, value] of Object.entries(manualResponses)) {
-        if (lowerQuestion.includes(key)) {
-          matchedResponse = value;
-          break;
-        }
+      // Check for acne-related keywords
+      if (lowerQuestion.includes('acne') || lowerQuestion.includes('pimple') || lowerQuestion.includes('акне')) {
+        matchedResponse = manualResponses['acne'];
+      }
+      // Check for headache-related keywords  
+      else if (lowerQuestion.includes('headache') || lowerQuestion.includes('head pain') || lowerQuestion.includes('главобол')) {
+        matchedResponse = manualResponses['headache'];
+      }
+      // Check for back pain keywords
+      else if (lowerQuestion.includes('back pain') || lowerQuestion.includes('back ache') || lowerQuestion.includes('болка в гърба')) {
+        matchedResponse = manualResponses['back pain'];
       }
       
       if (!matchedResponse) {
