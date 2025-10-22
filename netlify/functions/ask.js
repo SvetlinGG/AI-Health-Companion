@@ -16,87 +16,95 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Medical professional responses in English and Bulgarian
-    const medicalResponses = {
-      // English keywords
-      'cancer': 'Cancer happens when cells in your body start growing out of control. Here are the key things you should know:\n\n**What causes cancer:**\n• Damaged cells that multiply too quickly\n• Can spread to other parts of your body\n• Common types: breast, lung, colon, and prostate cancer\n\n**Why early detection matters:**\n• Catching cancer early makes treatment much more successful\n• Regular check-ups and screenings can save your life\n• Different ages need different types of screenings\n\n**Treatment options:**\n• Surgery to remove cancer cells\n• Chemotherapy (special medicines)\n• Radiation therapy (targeted energy beams)\n• Each treatment plan is personalized for you\n\n**Next steps:**\nIf you\'re worried about cancer symptoms, see a cancer specialist (oncologist) who can properly evaluate your situation and recommend the right tests.',
-      
-      'diabetes': 'Regarding your question about diabetes, this is a serious metabolic condition that requires careful management. We distinguish between Type 1 diabetes, typically diagnosed in younger patients due to autoimmune destruction of insulin-producing cells, and Type 2 diabetes, more common in adults and often associated with lifestyle factors.\n\nEffective management involves a comprehensive approach: maintaining optimal blood glucose levels through proper nutrition, regular physical activity, and when necessary, medication or insulin therapy. Regular monitoring of HbA1c levels, blood pressure, and lipid profiles is essential to prevent complications.\n\nI recommend working closely with an endocrinologist and diabetes educator to develop a personalized management plan. Early intervention and consistent care can significantly reduce the risk of complications such as cardiovascular disease, neuropathy, and retinopathy.',
-      
-      'heart disease': 'Concerning cardiovascular disease, this remains one of the leading health concerns globally. The spectrum includes coronary artery disease, myocardial infarction, heart failure, and various arrhythmias.\n\nKey risk factors include hypertension, dyslipidemia, diabetes, smoking, sedentary lifestyle, and family history. The good news is that many of these are modifiable through lifestyle interventions and appropriate medical management.\n\nI recommend implementing a heart-healthy lifestyle: regular aerobic exercise, a Mediterranean-style diet rich in omega-3 fatty acids, smoking cessation if applicable, and stress management. Regular cardiovascular screening, including blood pressure monitoring and lipid panels, is crucial for early detection and prevention.\n\nIf you have symptoms such as chest pain, shortness of breath, or palpitations, please seek immediate medical evaluation.',
-      
-      'hypertension': 'Hypertension, or elevated blood pressure, is often called the "silent killer" because it frequently presents without symptoms while causing significant cardiovascular damage over time.\n\nWe define hypertension as consistently elevated readings above 130/80 mmHg. The condition significantly increases your risk for stroke, heart attack, kidney disease, and other serious complications.\n\nManagement typically begins with lifestyle modifications: reducing sodium intake to less than 2,300mg daily, maintaining a healthy weight, regular physical activity, limiting alcohol consumption, and stress reduction techniques. When lifestyle changes are insufficient, antihypertensive medications may be necessary.\n\nI strongly recommend regular blood pressure monitoring and working with your healthcare provider to establish target goals based on your individual risk profile.',
-      
-      'depression': 'Depression is a serious medical condition that affects millions of people worldwide. It\'s important to understand that depression is not a sign of weakness or something you can simply "snap out of."\n\nClinical depression involves persistent changes in mood, cognition, and physical functioning that significantly impact daily life. Symptoms may include persistent sadness, loss of interest in activities, changes in appetite or sleep patterns, fatigue, and difficulty concentrating.\n\nTreatment approaches are highly effective and may include psychotherapy, particularly cognitive-behavioral therapy, and when appropriate, antidepressant medications. The combination of both treatments often yields the best outcomes.\n\nIf you\'re experiencing symptoms of depression, I strongly encourage you to reach out to a mental health professional or your primary care physician. Early intervention leads to better outcomes, and there are many effective treatment options available.',
-      
-      'anxiety': 'Anxiety disorders are among the most common mental health conditions, and they are highly treatable with proper care. These conditions involve excessive worry or fear that interferes with daily functioning.\n\nCommon presentations include generalized anxiety disorder, panic disorder, social anxiety disorder, and specific phobias. Physical symptoms may include rapid heartbeat, sweating, trembling, and shortness of breath.\n\nEvidence-based treatments include cognitive-behavioral therapy, which helps identify and modify thought patterns and behaviors that contribute to anxiety. In some cases, anti-anxiety medications or antidepressants may be beneficial as part of a comprehensive treatment plan.\n\nI recommend stress management techniques such as deep breathing exercises, progressive muscle relaxation, and mindfulness meditation. However, if anxiety is significantly impacting your quality of life, please consider consulting with a mental health professional for proper evaluation and treatment.',
-      
-      // Bulgarian keywords
-      'рак': 'Относно вашия въпрос за рака, мога да ви предоставя важна медицинска информация. Ракът представлява сложна група заболявания, характеризиращи се с неконтролиран клетъчен растеж и потенциал за метастази. Най-честите форми включват рак на гърдата, белите дробове, дебелото черво и простатата.\n\nРанното откриване значително подобрява резултатите от лечението, затова силно препоръчвам спазването на насоките за скрининг, подходящи за вашата възраст и рискови фактори. Подходите за лечение варират значително в зависимост от типа, стадия и индивидуалните пациентски фактори.\n\nПрепоръчвам ви да насрочите консултация с онколог, ако имате специфични притеснения или симптоми. Те могат да предоставят персонализирана оценка на риска и подходящи препоръки за скрининг.',
-      
-      'диабет': 'Относно вашия въпрос за диабета, това е сериозно метаболитно състояние, което изисква внимателно управление. Разграничаваме диабет тип 1, обикновено диагностициран при по-млади пациенти поради автоимунно разрушаване на инсулин-продуциращите клетки, и диабет тип 2, по-често срещан при възрастни.\n\nЕфективното управление включва цялостен подход: поддържане на оптимални нива на кръвната глукоза чрез правилно хранене, редовна физическа активност и при необходимост медикаментозна терапия или инсулин.\n\nПрепоръчвам тясно сътрудничество с ендокринолог и диабетен educator за разработване на персонализиран план за управление. Ранната интервенция може значително да намали риска от усложнения.',
-      
-      'сърдечно заболяване': 'Относно сърдечно-съдовите заболявания, те остават една от водещите здравни грижи в световен мащаб. Спектърът включва коронарна артериална болест, миокарден инфаркт, сърдечна недостатъчност и различни аритмии.\n\nКлючовите рискови фактори включват хипертония, дислипидемия, диабет, тютюнопушене, заседнал начин на живот и семейна анамнеза. Добрата новина е, че много от тях могат да бъдат модифицирани чрез промени в начина на живот.\n\nПрепоръчвам прилагане на сърдечно-здравословен начин на живот: редовни аеробни упражнения, средиземноморска диета, богата на омега-3 мастни киселини, и редовен кардиоваскуларен скрининг.\n\nАко имате симптоми като болка в гърдите, задух или сърцебиене, моля, потърсете незабавна медицинска оценка.',
-      
-      'хипертония': 'Хипертонията, или повишеното кръвно налягане, често се нарича "тихия убиец", защото често се проявява без симптоми, докато причинява значителни сърдечно-съдови увреждания с времето.\n\nДефинираме хипертонията като постоянно повишени стойности над 130/80 mmHg. Състоянието значително увеличава риска от инсулт, инфаркт, бъбречно заболяване и други сериозни усложнения.\n\nУправлението обикновено започва с промени в начина на живот: намаляване на приема на натрий, поддържане на здравословно тегло, редовна физическа активност и техники за намаляване на стреса.\n\nСилно препоръчвам редовно наблюдение на кръвното налягане и работа с вашия лекар за установяване на целеви стойности.',
-      
-      'депресия': 'Депресията е сериозно медицинско състояние, което засяга милиони хора по света. Важно е да разберете, че депресията не е признак на слабост или нещо, от което можете просто да "излезете".\n\nКлиничната депресия включва постоянни промени в настроението, познанието и физическото функциониране, които значително въздействат на ежедневния живот.\n\nПодходите за лечение са високо ефективни и могат да включват психотерапия, особено когнитивно-поведенческа терапия, и когато е подходящо, антидепресивни медикаменти.\n\nАко изпитвате симптоми на депресия, силно ви насърчавам да се обърнете към специалист по психично здраве. Ранната интервенция води до по-добри резултати.',
-      
-      'тревожност': 'Тревожните разстройства са сред най-честите психични състояния и са високо лечими при правилна грижа. Тези състояния включват прекомерно безпокойство или страх, който пречи на ежедневното функциониране.\n\nЧесто срещаните прояви включват генерализирано тревожно разстройство, паническо разстройство и социално тревожно разстройство. Физическите симптоми могат да включват учестен сърдечен ритъм, изпотяване и задух.\n\nОснованите на доказателства лечения включват когнитивно-поведенческа терапия. В някои случаи антитревожни медикаменти могат да бъдат полезни като част от цялостен план за лечение.\n\nПрепоръчвам техники за управление на стреса като дълбоко дишане и медитация. Ако тревожността значително въздейства на качеството ви на живот, моля, помислете за консултация със специалист.',
-      
-      'headache': 'Headaches are very common and can have many different causes. Here\'s what might be causing yours:\n\n**Most common causes:**\n• Tension (stress, tight neck/shoulder muscles)\n• Dehydration (not drinking enough water)\n• Lack of sleep or poor sleep quality\n• Skipping meals or low blood sugar\n• Eye strain (too much screen time)\n• Sinus congestion or allergies\n\n**Quick relief methods:**\n• Drink plenty of water\n• Rest in a quiet, dark room\n• Apply cold or warm compress to head/neck\n• Gentle neck and shoulder stretches\n• Over-the-counter pain relievers\n\n**When to see a doctor:**\n• Sudden, severe headache unlike any before\n• Headache with fever, stiff neck, or confusion\n• Headaches getting worse or more frequent\n• Headache after a head injury',
-      
-      'back pain': 'Back pain is extremely common and can range from mild discomfort to severe pain. Here\'s what you need to know:\n\n**Common causes:**\n• Muscle strain from lifting or sudden movement\n• Poor posture (sitting, standing, sleeping)\n• Herniated or bulging disc\n• Arthritis or joint problems\n• Stress and tension\n• Lack of exercise or weak core muscles\n\n**Immediate relief:**\n• Apply ice for first 24-48 hours, then heat\n• Gentle stretching and movement (don\'t stay in bed)\n• Over-the-counter anti-inflammatory medication\n• Sleep on your side with pillow between knees\n• Maintain good posture\n\n**When to see a doctor immediately:**\n• Pain after a fall or injury\n• Numbness or tingling in legs\n• Loss of bladder or bowel control\n• Severe pain that doesn\'t improve with rest\n• Fever with back pain',
-      
-      'neck pain': 'Neck pain is often caused by muscle tension and poor posture. Here\'s how to address it:\n\n**Common causes:**\n• Poor posture (looking down at phone/computer)\n• Sleeping in wrong position\n• Muscle strain or tension\n• Stress and anxiety\n• Whiplash from car accident\n• Arthritis or disc problems\n\n**Relief methods:**\n• Apply ice for acute pain, heat for muscle tension\n• Gentle neck stretches and rolls\n• Improve your workspace ergonomics\n• Sleep with proper pillow support\n• Massage or gentle self-massage\n• Anti-inflammatory medication\n\n**Prevention:**\n• Keep your head aligned over your shoulders\n• Take breaks from computer work\n• Use ergonomic pillow for sleep\n• Manage stress levels\n\n**See a doctor if:**\n• Severe pain after injury\n• Numbness or weakness in arms\n• Pain radiating down arms\n• Headaches with neck pain',
-      
-      'shoulder pain': 'Shoulder pain can affect your daily activities. Here\'s what might be causing it:\n\n**Common causes:**\n• Rotator cuff injury or strain\n• Frozen shoulder (stiffness and pain)\n• Bursitis (inflammation of fluid sacs)\n• Arthritis in shoulder joint\n• Poor posture or overuse\n• Sleeping on shoulder wrong way\n\n**Treatment options:**\n• Rest and avoid overhead activities\n• Ice for acute injury, heat for stiffness\n• Gentle range-of-motion exercises\n• Anti-inflammatory medication\n• Physical therapy exercises\n• Proper sleeping position\n\n**Exercises that help:**\n• Gentle arm circles\n• Cross-body arm stretches\n• Wall push-ups\n• Doorway stretches\n\n**When to get help:**\n• Sudden severe pain\n• Cannot move shoulder\n• Numbness or tingling in arm\n• Pain persists more than a few days',
-      
-      'knee pain': 'Knee pain can make walking and daily activities difficult. Here\'s what you should know:\n\n**Common causes:**\n• Arthritis (wear and tear of cartilage)\n• Ligament injuries (ACL, MCL tears)\n• Meniscus tears (cartilage damage)\n• Overuse from running or sports\n• Bursitis (inflammation)\n• Being overweight (extra pressure on knees)\n\n**Immediate care:**\n• Rest and avoid activities that worsen pain\n• Ice for 15-20 minutes several times daily\n• Elevate leg when sitting or lying down\n• Compression with elastic bandage\n• Over-the-counter pain relievers\n\n**Strengthening exercises:**\n• Straight leg raises\n• Quad and hamstring stretches\n• Low-impact activities (swimming, cycling)\n• Calf raises\n\n**See a doctor if:**\n• Knee gives out or feels unstable\n• Cannot bear weight on leg\n• Obvious deformity\n• Severe swelling or redness\n• Fever with knee pain',
-      
-      'joint pain': 'Joint pain can affect any joint in your body. Here\'s comprehensive information:\n\n**Common causes:**\n• Arthritis (osteoarthritis or rheumatoid)\n• Overuse or repetitive motion\n• Injury or trauma\n• Autoimmune conditions\n• Infections\n• Age-related wear and tear\n\n**Management strategies:**\n• Maintain healthy weight\n• Regular low-impact exercise\n• Hot and cold therapy\n• Anti-inflammatory medications\n• Joint-friendly activities (swimming, yoga)\n• Proper rest and sleep\n\n**Foods that help:**\n• Omega-3 rich fish\n• Anti-inflammatory foods (berries, leafy greens)\n• Turmeric and ginger\n• Avoid processed foods and excess sugar\n\n**Warning signs:**\n• Multiple joints affected suddenly\n• Joint deformity\n• Severe morning stiffness\n• Fever with joint pain\n• Rapid onset of severe pain',
-      
-      'eye pain': 'Eye pain can range from mild irritation to severe discomfort. Here\'s what might be causing it:\n\n**Common causes:**\n• Dry eyes (not enough tears)\n• Eye strain from screens or reading\n• Allergies or irritants\n• Foreign object in eye\n• Infection (pink eye, stye)\n• Scratched cornea\n\n**Immediate relief:**\n• Flush eye with clean water\n• Use artificial tears for dry eyes\n• Take breaks from screen time (20-20-20 rule)\n• Remove contact lenses\n• Apply cool compress for swelling\n• Avoid rubbing eyes\n\n**Prevention:**\n• Blink frequently when using screens\n• Use proper lighting when reading\n• Wear sunglasses outdoors\n• Keep hands clean\n• Replace eye makeup regularly\n\n**Seek immediate care for:**\n• Sudden severe eye pain\n• Vision changes or loss\n• Light sensitivity with pain\n• Chemical splash in eye\n• Eye injury or trauma',
-      
-      'heart pain': 'Chest or heart pain should always be taken seriously. Here\'s important information:\n\n**Possible causes:**\n• Heart attack (blocked artery)\n• Angina (reduced blood flow to heart)\n• Acid reflux or heartburn\n• Muscle strain in chest\n• Anxiety or panic attacks\n• Lung problems\n\n**Heart attack warning signs:**\n• Crushing chest pain or pressure\n• Pain spreading to arm, jaw, or back\n• Shortness of breath\n• Nausea or sweating\n• Feeling of impending doom\n\n**CALL 911 IMMEDIATELY if you have:**\n• Severe chest pain\n• Difficulty breathing\n• Pain with sweating and nausea\n• Chest pain lasting more than a few minutes\n\n**Risk factors to know:**\n• High blood pressure\n• High cholesterol\n• Diabetes\n• Smoking\n• Family history of heart disease\n\n**Prevention:**\n• Regular exercise\n• Healthy diet\n• Don\'t smoke\n• Manage stress\n• Regular check-ups',
-      
-      'arrhythmia': 'Arrhythmia means your heart beats irregularly. Here\'s what you need to know:\n\n**What it feels like:**\n• Heart racing or pounding\n• Skipped or extra heartbeats\n• Fluttering in chest\n• Slow or fast heartbeat\n• Dizziness or lightheadedness\n\n**Common causes:**\n• Stress and anxiety\n• Caffeine or alcohol\n• Certain medications\n• Heart disease\n• Thyroid problems\n• Sleep apnea\n\n**When it\'s usually harmless:**\n• Occasional skipped beats\n• Brief episodes during stress\n• Related to caffeine intake\n• No other symptoms\n\n**Lifestyle changes:**\n• Reduce caffeine and alcohol\n• Manage stress and anxiety\n• Get adequate sleep\n• Exercise regularly\n• Avoid smoking\n\n**Seek immediate care for:**\n• Chest pain with irregular heartbeat\n• Fainting or near-fainting\n• Severe shortness of breath\n• Heart rate over 100 or under 60 at rest\n• Persistent irregular rhythm',
-      
-      'hair loss': 'Hair loss is common and can have various causes. Here\'s what might be happening:\n\n**Common types:**\n• Male/female pattern baldness (genetics)\n• Stress-related hair loss\n• Hormonal changes (pregnancy, menopause)\n• Medical conditions (thyroid, autoimmune)\n• Medications or treatments\n• Nutritional deficiencies\n\n**Possible causes:**\n• Genetics (most common)\n• Hormonal imbalances\n• Stress (physical or emotional)\n• Poor nutrition\n• Tight hairstyles or harsh treatments\n• Medical conditions\n\n**What you can do:**\n• Eat protein-rich, balanced diet\n• Manage stress levels\n• Be gentle with hair care\n• Avoid tight hairstyles\n• Consider supplements (biotin, iron)\n• Use mild shampoos\n\n**Treatment options:**\n• Minoxidil (over-the-counter)\n• Prescription medications\n• Hair transplant procedures\n• Lifestyle changes\n\n**See a doctor if:**\n• Sudden or patchy hair loss\n• Hair loss with other symptoms\n• Scalp irritation or pain\n• Concerned about the pattern',
-      
-      'tinnitus': 'Tinnitus is hearing ringing, buzzing, or other sounds when no external sound is present:\n\n**What causes it:**\n• Loud noise exposure\n• Ear wax buildup\n• Ear infections\n• Certain medications\n• Age-related hearing loss\n• Blood pressure problems\n\n**Types of sounds:**\n• Ringing or buzzing\n• Hissing or whistling\n• Clicking or pulsing\n• Roaring or humming\n\n**Management strategies:**\n• Avoid loud noises\n• Use background noise or white noise\n• Manage stress and anxiety\n• Limit caffeine and alcohol\n• Get adequate sleep\n• Stay physically active\n\n**Treatment options:**\n• Remove ear wax if present\n• Treat underlying conditions\n• Hearing aids if hearing loss present\n• Sound therapy\n• Counseling for coping strategies\n\n**See a doctor if:**\n• Sudden onset of tinnitus\n• Tinnitus in only one ear\n• Pulsing sounds with heartbeat\n• Hearing loss with tinnitus\n• Dizziness or balance problems',
-      
-      'acne': 'Acne is a common skin condition that affects people of all ages. Here\'s how to manage it:\n\n**What causes acne:**\n• Clogged pores from oil and dead skin\n• Bacteria growth in pores\n• Hormonal changes\n• Genetics\n• Certain products or medications\n• Stress (can worsen existing acne)\n\n**Daily care routine:**\n• Wash face twice daily with gentle cleanser\n• Use non-comedogenic (won\'t clog pores) products\n• Moisturize even if skin is oily\n• Don\'t pick or squeeze pimples\n• Change pillowcases regularly\n• Remove makeup before bed\n\n**Over-the-counter treatments:**\n• Benzoyl peroxide (kills bacteria)\n• Salicylic acid (unclogs pores)\n• Retinol products (prevent clogged pores)\n• Clay masks (absorb excess oil)\n\n**Lifestyle factors:**\n• Eat balanced diet (limit dairy and sugar)\n• Manage stress levels\n• Get adequate sleep\n• Exercise regularly (shower after)\n\n**See a dermatologist if:**\n• Severe or cystic acne\n• Scarring is occurring\n• Over-the-counter treatments don\'t work\n• Acne affects self-esteem',
-      
-      'toothache': 'Toothaches can be extremely painful and need prompt attention. Here\'s what to do:\n\n**Common causes:**\n• Tooth decay (cavities)\n• Infected tooth or abscess\n• Cracked or broken tooth\n• Gum disease\n• Grinding teeth at night\n• Food stuck between teeth\n\n**Immediate pain relief:**\n• Rinse with warm salt water\n• Take over-the-counter pain relievers\n• Apply cold compress to outside of cheek\n• Use clove oil on affected tooth\n• Keep head elevated when lying down\n• Avoid very hot or cold foods\n\n**What NOT to do:**\n• Don\'t put aspirin directly on tooth\n• Don\'t ignore severe pain\n• Don\'t delay dental treatment\n• Don\'t use heat on swollen face\n\n**Prevention:**\n• Brush twice daily with fluoride toothpaste\n• Floss daily\n• Regular dental check-ups\n• Limit sugary foods and drinks\n• Don\'t use teeth as tools\n\n**See a dentist immediately for:**\n• Severe, persistent pain\n• Swelling in face or gums\n• Fever with toothache\n• Pus or discharge\n• Pain when biting down'
-    };
-
-    // Find relevant response
-    const lowerQuestion = question.toLowerCase();
-    let response = '';
+    let response;
     let isBulgarian = /[а-я]/.test(question);
     
-    for (const [condition, info] of Object.entries(medicalResponses)) {
-      if (lowerQuestion.includes(condition)) {
-        response = info;
-        break;
+    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 10) {
+      try {
+        console.log('Using Gemini AI for health question...');
+        
+        // Create health-focused prompt for Gemini
+        const healthPrompt = isBulgarian ? 
+          `Ти си професионален лекар и здравен консултант. Отговори на този здравен въпрос на български език: "${question}"
+
+Моля, структурирай отговора си така:
+- Използвай прости думи, които всеки може да разбере
+- Организирай информацията с точки и секции
+- Включи възможни причини
+- Дай практични съвети за облекчение
+- Посочи кога да се търси медицинска помощ
+- Винаги напомни, че това е обща информация и не заменя консултация с лекар
+
+Отговори професионално, но достъпно за обикновените хора.` :
+          
+          `You are a professional doctor and health consultant. Answer this health question: "${question}"
+
+Please structure your response like this:
+- Use simple language that everyone can understand
+- Organize information with bullet points and sections
+- Include possible causes
+- Give practical relief advice
+- Mention when to seek medical help
+- Always remind that this is general information and doesn't replace doctor consultation
+
+Respond professionally but accessible to regular people.`;
+
+        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: healthPrompt
+              }]
+            }]
+          })
+        });
+
+        console.log('Gemini API Response status:', apiResponse.status);
+        
+        if (!apiResponse.ok) {
+          const errorText = await apiResponse.text();
+          console.error('Gemini API Error:', errorText);
+          throw new Error(`Gemini API responded with status: ${apiResponse.status}`);
+        }
+
+        const data = await apiResponse.json();
+        console.log('Gemini response received successfully');
+        
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Unable to generate response';
+        
+        response = {
+          answer: text,
+          sources: []
+        };
+      } catch (aiError) {
+        console.error('Gemini AI Error:', aiError);
+        // Fallback response
+        response = {
+          answer: isBulgarian ? 
+            `За въпроса "${question}" препоръчвам да се консултирате с медицински специалист за точна диагноза и лечение. Всеки здравен проблем изисква индивидуален подход и професионална оценка.` :
+            `For your question about "${question}", I recommend consulting with a medical professional for accurate diagnosis and treatment. Every health issue requires individual assessment and professional evaluation.`,
+          sources: []
+        };
       }
-    }
-    
-    // Default professional response based on language
-    if (!response) {
-      if (isBulgarian) {
-        response = `Благодаря за вашия въпрос относно "${question}". Като медицински специалист, бих искал да подчертая важността на персонализираната оценка за всяко здравно състояние. Въпреки че мога да предоставя обща медицинска информация, всеки случай е уникален и изисква индивидуален подход.\n\nПрепоръчвам ви да се консултирате с квалифициран здравен специалист, който може да направи подробна оценка на вашето състояние, да прегледа медицинската ви история и да предостави най-подходящите препоръки за вашата конкретна ситуация.`;
-      } else {
-        response = `Thank you for your inquiry about "${question}". As a medical professional, I want to emphasize the importance of personalized assessment for any health condition. While I can provide general medical information, each case is unique and requires an individualized approach.\n\nI recommend consulting with a qualified healthcare provider who can conduct a thorough evaluation of your condition, review your medical history, and provide the most appropriate recommendations for your specific situation.`;
-      }
+    } else {
+      console.log('No Gemini API key found, using fallback response');
+      response = {
+        answer: isBulgarian ? 
+          `За въпроса "${question}" препоръчвам да се консултирате с медицински специалист за точна диагноза и лечение.` :
+          `For your question about "${question}", I recommend consulting with a medical professional for accurate diagnosis and treatment.`,
+        sources: []
+      };
     }
     
     // Add professional disclaimer
     if (isBulgarian) {
-      response += '\n\n⚠️ Медицинска бележка: Тази информация е предоставена с образователна цел и не заменя професионалната медицинска консултация, диагноза или лечение. Винаги се консултирайте с вашия лекар или друг квалифициран здравен специалист при медицински въпроси или притеснения.';
+      response.answer += '\n\n⚠️ Медицинска бележка: Тази информация е предоставена с образователна цел и не заменя професионалната медицинска консултация, диагноза или лечение. Винаги се консултирайте с вашия лекар или друг квалифициран здравен специалист при медицински въпроси или притеснения.';
     } else {
-      response += '\n\n⚠️ Medical Disclaimer: This information is provided for educational purposes and does not replace professional medical consultation, diagnosis, or treatment. Always consult with your physician or other qualified healthcare provider regarding medical questions or concerns.';
+      response.answer += '\n\n⚠️ Medical Disclaimer: This information is provided for educational purposes and does not replace professional medical consultation, diagnosis, or treatment. Always consult with your physician or other qualified healthcare provider regarding medical questions or concerns.';
     }
 
     return {
@@ -107,10 +115,7 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
-      body: JSON.stringify({
-        answer: response,
-        sources: []
-      })
+      body: JSON.stringify(response)
     };
   } catch (error) {
     console.error('Function error:', error);
