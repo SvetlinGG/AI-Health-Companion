@@ -8,6 +8,16 @@ class EtlClient:
         self.page_size = page_size
         self.timeout = timeout
 
+    def test_connection(self) -> Dict[str, Any]:
+        """Test connection to the API"""
+        try:
+            url = f"{self.base_url}/health"
+            r = requests.get(url, headers=self.headers, timeout=self.timeout)
+            r.raise_for_status()
+            return {"success": True, "message": "Connection successful"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
     def fetch(self, resource: str, since: Optional[str], page: int) -> List[Dict[str, Any]]:
         url = f"{self.base_url}/{resource}"
         params = {"page": page, "limit": self.page_size}

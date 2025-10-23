@@ -24,3 +24,15 @@
   to = "/.netlify/functions/analytics-snapshot"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/etl/events"
+  to = "/.netlify/functions/etl-events"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/etl/health"
+  to = "/.netlify/functions/etl-health"
+  status = 200
+  force = true
