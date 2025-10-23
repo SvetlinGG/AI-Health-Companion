@@ -17,24 +17,14 @@ exports.handler = async (event, context) => {
     }
 
     let response;
-    let isBulgarian = /[а-я]/.test(question);
+    let isBulgarian = false;
     
     // Try Gemini AI with better prompting
     let geminiWorked = false;
     
     if (process.env.GEMINI_API_KEY) {
       try {
-        const healthPrompt = isBulgarian ? 
-          `Ти си опитен лекар с дълги години практика. Пациент те пита: "${question}". 
-
-Дай професионален, но разбираем отговор който включва:
-- Какво представлява състоянието/симптомът
-- Възможни причини и рискови фактори  
-- Препоръки за справяне или лечение
-- Кога да се търси медицинска помощ
-
-Говори като истински лекар - професионално, но с топлота и разбиране.` :
-          `You are an experienced doctor with years of practice. A patient asks: "${question}"
+        const healthPrompt = `You are an experienced doctor with years of practice. A patient asks: "${question}"
 
 Provide a professional yet understandable response that includes:
 - What the condition/symptom represents
@@ -122,59 +112,19 @@ Speak like a real doctor - professionally but with warmth and understanding.`;
         
         // Common health topics with intelligent responses
         const healthTopics = {
-          // Symptoms
-          'fever|temperature': isBulgarian ? 
-            'Треската е естествена защитна реакция на организма срещу инфекции. Причини: вирусни/бактериални инфекции, възпаление, стрес. При температура над 38.5°C или продължителна треска се препоръчва лекарска консултация.' :
-            'Fever is a natural protective response against infections. Causes: viral/bacterial infections, inflammation, stress. Medical consultation recommended for temperature above 38.5°C or persistent fever.',
-          
-          'cough|coughing': isBulgarian ?
-            'Кашлицата е защитен рефлекс за почистване на дихателните пътища. Причини: простуда, алергии, астма, ГЕРБ, инфекции. Хронична кашлица (над 8 седмици) изисква медицинска оценка.' :
-            'Cough is a protective reflex to clear airways. Causes: cold, allergies, asthma, GERD, infections. Chronic cough (over 8 weeks) requires medical evaluation.',
-          
-          'fatigue|tired|exhausted': isBulgarian ?
-            'Умората може да се дължи на недостиг на сън, стрес, анемия, хормонални нарушения, депресия, хронични заболявания. Важно е да се установи основната причина чрез медицинска консултация.' :
-            'Fatigue can be due to sleep deprivation, stress, anemia, hormonal disorders, depression, chronic diseases. Important to identify underlying cause through medical consultation.',
-          
-          // Body systems
-          'stomach|gastric|digestive': isBulgarian ?
-            'Стомашните проблеми могат да включват гастрит, язви, ГЕРБ, синдром на раздразненото черво. Причини: стрес, неправилно хранене, H. pylori, медикаменти. При постоянни симптоми се препоръчва гастроентеролог.' :
-            'Stomach problems can include gastritis, ulcers, GERD, irritable bowel syndrome. Causes: stress, poor diet, H. pylori, medications. Persistent symptoms warrant gastroenterologist consultation.',
-          
-          'skin|dermatology': isBulgarian ?
-            'Кожните проблеми могат да бъдат алергични, инфекциозни, автоимунни или генетични. Честите състояния включват екзема, псориазис, дерматит. Препоръчва се консултация с дерматолог за точна диагноза.' :
-            'Skin problems can be allergic, infectious, autoimmune or genetic. Common conditions include eczema, psoriasis, dermatitis. Dermatologist consultation recommended for accurate diagnosis.',
-          
-          'joint|arthritis|bone': isBulgarian ?
-            'Ставните болки могат да се дължат на артрит, артроза, травми, автоимунни заболявания. Рискови фактори: възраст, наднормено тегло, генетика, предишни травми. При постоянна болка се препоръчва ревматолог.' :
-            'Joint pain can be due to arthritis, osteoarthritis, injuries, autoimmune diseases. Risk factors: age, excess weight, genetics, previous injuries. Persistent pain warrants rheumatologist consultation.',
+          'dehydration|dehydrated': 'Early signs of dehydration can appear subtly at first but worsen quickly if fluids aren\'t replaced. Here are the most common ones:\n\n🧠 General symptoms:\n• Thirst – often the first and most obvious sign\n• Dry mouth or sticky saliva\n• Fatigue or low energy\n• Headache or lightheadedness\n• Difficulty concentrating\n\n💧 Physical signs:\n• Dark yellow or concentrated urine (healthy urine should be pale yellow)\n• Less frequent urination or smaller amounts\n• Dry skin or lips\n• Sunken eyes\n• Slight dizziness when standing up\n\n❤️ In more active or hot conditions:\n• Muscle cramps\n• Rapid heartbeat\n• Flushed or overheated skin\n• Reduced sweating despite exertion\n\n⚠️ For children and older adults:\n• Fewer wet diapers or trips to the bathroom\n• Lethargy or irritability\n• Dry tongue or inside of the mouth\n\nIn severe cases: confusion, rapid breathing, or fainting (→ medical emergency)',
 
-          'cancer|tumor': isBulgarian ?
-            'Ракът е група заболявания при които клетките растат неконтролируемо. Основни причини: генетика, възраст, начин на живот, околна среда. Над 200 различни типа рак съществуват. Ранното откриване значително подобрява прогнозата.' :
-            'Cancer is a group of diseases where cells grow uncontrollably. Main causes: genetics, age, lifestyle, environment. Over 200 different types of cancer exist. Early detection significantly improves prognosis.',
+          'fever|temperature': 'Fever is a natural protective response against infections. Causes: viral/bacterial infections, inflammation, stress. Medical consultation recommended for temperature above 38.5°C or persistent fever.',
 
-          'blood pressure|hypertension': isBulgarian ?
-            'Високото кръвно налягане (хипертония) е състояние при което кръвта упражнява прекомерна сила върху артериите. Засяга 1.3 милиарда души глобално. Основни рискови фактори: възраст, генетика, начин на живот.' :
-            'High blood pressure (hypertension) is a condition where blood exerts excessive force on arteries. Affects 1.3 billion people globally. Main risk factors: age, genetics, lifestyle.',
+          'headache|migraine': 'Headaches can be tension-type (most common), migraine, or secondary to other causes. Possible factors: stress, fatigue, dehydration, poor posture, hormones, or medical conditions.',
 
-          'diabetes|blood sugar': isBulgarian ?
-            'Диабетът е заболяване при което организмът не може да регулира кръвната захар. Тип 1 (5-10%) - автоимунен; Тип 2 (90-95%) - инсулинова резистентност. Засяга 537 милиона души глобално.' :
-            'Diabetes is a disease where the body cannot regulate blood sugar. Type 1 (5-10%) - autoimmune; Type 2 (90-95%) - insulin resistance. Affects 537 million people globally.',
+          'back pain': 'Back pain affects 80% of people. Most common causes: muscle strain, poor posture, disc problems. Can be acute (under 6 weeks) or chronic (over 3 months).',
 
-          'heart|cardiac': isBulgarian ?
-            'Сърдечните заболявания са водеща причина за смърт глобално. Включват коронарна болест, сърдечна недостатъчност, аритмии. Основни рискови фактори: възраст, пол, генетика, начин на живот.' :
-            'Heart disease is the leading cause of death globally. Includes coronary disease, heart failure, arrhythmias. Main risk factors: age, gender, genetics, lifestyle.',
+          'cancer|tumor': 'Cancer is a group of diseases where cells grow uncontrollably. Main causes: genetics, age, lifestyle, environment. Over 200 different types of cancer exist. Early detection significantly improves prognosis.',
 
-          'acne|pimple': isBulgarian ?
-            'Акнето е възпалително кожно заболяване с пъпки и черни точки. Основни причини: хормони, бактерии, запушени пори, генетика. Засяга 85% от тийнейджърите и може да продължи в зряла възраст.' :
-            'Acne is an inflammatory skin condition with pimples and blackheads. Main causes: hormones, bacteria, clogged pores, genetics. Affects 85% of teenagers and can continue into adulthood.',
+          'diabetes|blood sugar': 'Diabetes is a disease where the body cannot regulate blood sugar. Type 1 (5-10%) - autoimmune; Type 2 (90-95%) - insulin resistance. Affects 537 million people globally.',
 
-          'headache|migraine': isBulgarian ?
-            'Главоболието може да бъде тензионно (най-често), мигрена, или вторично от други причини. Възможни фактори: стрес, умора, дехидратация, лоша стойка, хормони, или медицински състояния.' :
-            'Headaches can be tension-type (most common), migraine, or secondary to other causes. Possible factors: stress, fatigue, dehydration, poor posture, hormones, or medical conditions.',
-
-          'back pain': isBulgarian ?
-            'Болката в гърба засяга 80% от хората. Най-чести причини: мускулно напрежение, лоша стойка, дискови проблеми. Може да бъде остра (под 6 седмици) или хронична (над 3 месеца).' :
-            'Back pain affects 80% of people. Most common causes: muscle strain, poor posture, disc problems. Can be acute (under 6 weeks) or chronic (over 3 months).'
+          'heart|cardiac': 'Heart disease is the leading cause of death globally. Includes coronary disease, heart failure, arrhythmias. Main risk factors: age, gender, genetics, lifestyle.'
         };
         
         // Find matching topic
@@ -186,9 +136,7 @@ Speak like a real doctor - professionally but with warmth and understanding.`;
         }
         
         // General health response
-        return isBulgarian ?
-          `За въпроса "${question}" - това е здравна тема която може да има различни причини и проявления. Препоръчвам консултация с подходящ медицински специалист за професионална оценка и персонализиран съвет според вашата конкретна ситуация.` :
-          `Regarding "${question}" - this is a health topic that can have various causes and manifestations. I recommend consultation with an appropriate medical specialist for professional evaluation and personalized advice for your specific situation.`;
+        return `Regarding "${question}" - this is a health topic that can have various causes and manifestations. I recommend consultation with an appropriate medical specialist for professional evaluation and personalized advice for your specific situation.`;
       };
       
       const getRelevantSources = (question) => {
@@ -220,17 +168,11 @@ Speak like a real doctor - professionally but with warmth and understanding.`;
     
     // Add references and disclaimer
     if (response.sources && response.sources.length > 0) {
-      const referencesText = isBulgarian ? 
-        '\n\n📚 За най-актуална информация посетете:' :
-        '\n\n📚 For the most up-to-date information, visit:';
+      const referencesText = '\n\n📚 For the most up-to-date information, visit:';
       response.answer += referencesText + '\n' + response.sources.map(source => `• ${source}`).join('\n');
     }
     
-    if (isBulgarian) {
-      response.answer += '\n\n⚠️ Медицинска бележка: Тази информация е предоставена с образователна цел и не заменя професионалната медицинска консултация, диагноза или лечение. Винаги се консултирайте с вашия лекар или друг квалифициран здравен специалист при медицински въпроси или притеснения.';
-    } else {
-      response.answer += '\n\n⚠️ Medical Disclaimer: This information is provided for educational purposes and does not replace professional medical consultation, diagnosis, or treatment. Always consult with your physician or other qualified healthcare provider regarding medical questions or concerns.';
-    }
+    response.answer += '\n\n⚠️ Medical Disclaimer: This information is provided for educational purposes and does not replace professional medical consultation, diagnosis, or treatment. Always consult with your physician or other qualified healthcare provider regarding medical questions or concerns.';
 
     return {
       statusCode: 200,
