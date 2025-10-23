@@ -261,33 +261,33 @@ button:disabled {
   :host {
     padding: 0;
     height: 100vh;
-    height: 100svh;
-    max-height: 100vh;
-    max-height: 100svh;
+    height: 100dvh;
     overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   
   .chat-container {
-    padding: 10px 15px 0 15px;
+    padding: 0;
     border-radius: 0;
     margin: 0;
-    height: 100vh;
-    height: 100svh;
-    max-height: 100vh;
-    max-height: 100svh;
+    height: 100%;
     background: transparent;
     box-shadow: none;
     border: none;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    position: relative;
   }
   
   .chat {
     flex: 1;
     overflow-y: auto;
-    margin-bottom: 0;
-    padding-bottom: 90px;
+    padding: 10px 15px 80px 15px;
+    margin: 0;
   }
   
   .bubble {
@@ -316,7 +316,7 @@ button:disabled {
   }
   
   .composer {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
