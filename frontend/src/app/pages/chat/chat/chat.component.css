@@ -268,7 +268,7 @@ button:disabled {
   }
   
   .chat-container {
-    padding: 10px 15px 80px 15px;
+    padding: 10px 15px 0 15px;
     border-radius: 0;
     margin: 0;
     height: 100vh;
@@ -287,6 +287,7 @@ button:disabled {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 0;
+    padding-bottom: 90px;
   }
   
   .bubble {
@@ -321,13 +322,11 @@ button:disabled {
     right: 0;
     gap: 10px;
     margin: 0;
-    padding: 15px;
-    padding-bottom: env(safe-area-inset-bottom, 15px);
-    padding-bottom: 15px;
+    padding: 12px 15px;
+    padding-bottom: max(env(safe-area-inset-bottom), 12px);
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(15px);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
     z-index: 1000;
   }
 }
