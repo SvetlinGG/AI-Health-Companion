@@ -231,22 +231,23 @@ Speak like a real doctor - professionally but with warmth and understanding.`;
           'chronic fatigue': 'Persistent exhaustion not relieved by rest. Causes: sleep disorders, depression, thyroid problems, anemia, chronic diseases. Requires medical evaluation to identify cause.'
         };
         
-        // Find best matching topic with priority for more specific matches
-        let bestMatch = null;
-        let maxMatches = 0;
-        
+        // Single keyword search - find any matching topic
         for (const [keywords, response] of Object.entries(healthTopics)) {
           const keywordList = keywords.split('|');
-          const matches = keywordList.filter(keyword => lowerQ.includes(keyword)).length;
-          
-          if (matches > maxMatches) {
-            maxMatches = matches;
-            bestMatch = response;
+          if (keywordList.some(keyword => lowerQ.includes(keyword))) {
+            return response;
           }
         }
         
-        if (bestMatch) {
-          return bestMatch;
+        // Also check if question contains any single word from keywords
+        const questionWords = lowerQ.split(/\s+/);
+        for (const [keywords, response] of Object.entries(healthTopics)) {
+          const keywordList = keywords.split('|');
+          for (const keyword of keywordList) {
+            if (questionWords.includes(keyword)) {
+              return response;
+            }
+          }
         }
         
         // General health response
